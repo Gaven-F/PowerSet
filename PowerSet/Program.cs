@@ -14,7 +14,6 @@ namespace PowerSet
         [STAThread]
         static void Main()
         {
-
             //var data = new List<DataSave>();
             //data.Add(new DataSave() {Data1 = "11" });
             //data.Add(new DataSave() {Data1 = "22" });
@@ -28,7 +27,7 @@ namespace PowerSet
             //Console.WriteLine(d);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Main.MainForm());
+            Application.Run(new Attribute.MainForm());
         }
     }
 

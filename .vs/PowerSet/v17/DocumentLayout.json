@@ -3,8 +3,24 @@
   "WorkspaceRootPath": "D:\\PowerSet\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|d:\\powerset\\powerset\\main\\paramset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|solutionrelative:powerset\\main\\paramset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|d:\\powerset\\powerset\\main\\paramprocessset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|solutionrelative:powerset\\main\\paramprocessset.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|d:\\powerset\\powerset\\attribute\\colsetattribute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|solutionrelative:powerset\\attribute\\colsetattribute.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|d:\\powerset\\powerset\\main\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|solutionrelative:powerset\\main\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|d:\\powerset\\powerset\\main\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CD277375-A837-46C1-8581-85AD2E486278}|PowerSet\\PowerSet.csproj|solutionrelative:powerset\\main\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -19,11 +35,63 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "ParamSet.cs",
+              "DocumentMoniker": "D:\\PowerSet\\PowerSet\\Main\\ParamSet.cs",
+              "RelativeDocumentMoniker": "PowerSet\\Main\\ParamSet.cs",
+              "ToolTip": "D:\\PowerSet\\PowerSet\\Main\\ParamSet.cs",
+              "RelativeToolTip": "PowerSet\\Main\\ParamSet.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-28T09:37:04.437Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ColSetAttribute.cs",
+              "DocumentMoniker": "D:\\PowerSet\\PowerSet\\Attribute\\ColSetAttribute.cs",
+              "RelativeDocumentMoniker": "PowerSet\\Attribute\\ColSetAttribute.cs",
+              "ToolTip": "D:\\PowerSet\\PowerSet\\Attribute\\ColSetAttribute.cs",
+              "RelativeToolTip": "PowerSet\\Attribute\\ColSetAttribute.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-28T09:37:04.384Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ParamProcessSet.cs",
+              "DocumentMoniker": "D:\\PowerSet\\PowerSet\\Main\\ParamProcessSet.cs",
+              "RelativeDocumentMoniker": "PowerSet\\Main\\ParamProcessSet.cs",
+              "ToolTip": "D:\\PowerSet\\PowerSet\\Main\\ParamProcessSet.cs",
+              "RelativeToolTip": "PowerSet\\Main\\ParamProcessSet.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAsAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-28T09:36:50.356Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MainForm.cs",
+              "DocumentMoniker": "D:\\PowerSet\\PowerSet\\Main\\MainForm.cs",
+              "RelativeDocumentMoniker": "PowerSet\\Main\\MainForm.cs",
+              "ToolTip": "D:\\PowerSet\\PowerSet\\Main\\MainForm.cs",
+              "RelativeToolTip": "PowerSet\\Main\\MainForm.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-07-28T09:21:29.971Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "MainForm.cs [\u8BBE\u8BA1]",
               "DocumentMoniker": "D:\\PowerSet\\PowerSet\\Main\\MainForm.cs",
               "RelativeDocumentMoniker": "PowerSet\\Main\\MainForm.cs",
-              "ToolTip": "D:\\PowerSet\\PowerSet\\Main\\MainForm.cs [\u8BBE\u8BA1]*",
-              "RelativeToolTip": "PowerSet\\Main\\MainForm.cs [\u8BBE\u8BA1]*",
+              "ToolTip": "D:\\PowerSet\\PowerSet\\Main\\MainForm.cs [\u8BBE\u8BA1]",
+              "RelativeToolTip": "PowerSet\\Main\\MainForm.cs [\u8BBE\u8BA1]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-07-28T09:15:00.874Z",
               "EditorCaption": " [\u8BBE\u8BA1]"

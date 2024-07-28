@@ -42,6 +42,6 @@ D:\PowerSet\PowerSet\bin\Debug\EntityFramework.SqlServer.xml
 D:\PowerSet\PowerSet\bin\Debug\Newtonsoft.Json.xml
 D:\PowerSet\PowerSet\bin\Debug\System.Data.SQLite.xml
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.exe.config
-D:\PowerSet\PowerSet\obj\Debug\PowerSet.Main.MainForm.resources
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.SuggestedBindingRedirects.cache
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.Up2Date
+D:\PowerSet\PowerSet\obj\Debug\PowerSet.Attribute.MainForm.resources
