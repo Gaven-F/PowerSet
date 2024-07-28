@@ -31,7 +31,6 @@ D:\PowerSet\PowerSet\obj\Debug\PowerSet.pdb
 D:\PowerSet\PowerSet\bin\Debug\GF_SqlHelper.dll
 D:\PowerSet\PowerSet\bin\Debug\SqlSugar.dll
 D:\PowerSet\PowerSet\bin\Debug\GF_SqlHelper.dll.config
-D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.CopyComplete
 D:\PowerSet\PowerSet\bin\Debug\EntityFramework.dll
 D:\PowerSet\PowerSet\bin\Debug\EntityFramework.SqlServer.dll
 D:\PowerSet\PowerSet\bin\Debug\Newtonsoft.Json.dll
@@ -44,3 +43,5 @@ D:\PowerSet\PowerSet\bin\Debug\Newtonsoft.Json.xml
 D:\PowerSet\PowerSet\bin\Debug\System.Data.SQLite.xml
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.exe.config
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.Main.MainForm.resources
+D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.SuggestedBindingRedirects.cache
+D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.Up2Date
