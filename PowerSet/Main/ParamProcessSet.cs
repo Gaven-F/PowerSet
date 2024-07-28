@@ -10,7 +10,7 @@
         /// </summary>
         [ColSet("电流设置", DefaultVal = "1000")]
         public int I { get; set; } = -1;
-
+        
         [ColSet("实际电流", false, DefaultVal = "1000")]
         public int RealI { get; set; } = -1;
 

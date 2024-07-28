@@ -426,7 +426,7 @@ namespace PowerSet.Attribute
             0,
             0,
             0});
-			this.ChartHight_Val.ValueChanged += new System.EventHandler(this.ChartHight_Val_ValueChanged);
+			this.ChartHight_Val.ValueChanged += new System.EventHandler(this.ChartHight_Val_Changed);
 			// 
 			// tableLayoutPanel3
 			// 

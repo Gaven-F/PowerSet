@@ -27,6 +27,7 @@ namespace PowerSet.Attribute
 
             Prefix.ForEach(f => ParamSets.Add(f, new ParamSet()));
             InitTableData();
+
         }
 
         private void InitTableData()
@@ -109,7 +110,7 @@ namespace PowerSet.Attribute
             );
         }
 
-        private void ChartHight_Val_ValueChanged(object sender, EventArgs e)
+        private void ChartHight_Val_Changed(object sender, EventArgs e)
         {
             SplitLayout.SplitterDistance = (int)(
                 SplitLayout.Size.Height * (ChartHight_Val.Value / 100)
