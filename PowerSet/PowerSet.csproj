@@ -88,7 +88,10 @@
     <Compile Include="Main\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+<<<<<<< HEAD
     <Compile Include="Main\PowerController.cs" />
+=======
+>>>>>>> dev
     <Compile Include="Models\ParamProcessSet.cs" />
     <Compile Include="Models\ParamSet.cs" />
     <Compile Include="Models\RealIData.cs" />

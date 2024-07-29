@@ -28,7 +28,10 @@ namespace PowerSet
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Models.MainForm());
+<<<<<<< HEAD
             //Application.Run(new Form1());
+=======
+>>>>>>> dev
         }
     }
 

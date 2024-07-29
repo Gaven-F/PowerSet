@@ -6,7 +6,10 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using PowerSet.Attributes;
+<<<<<<< HEAD
 using PowerSet.Main;
+=======
+>>>>>>> dev
 using C = PowerSet.Main.ConstData;
 
 namespace PowerSet.Models
@@ -49,9 +52,12 @@ namespace PowerSet.Models
 
         private readonly Dictionary<string, double> RealVals = new Dictionary<string, double>();
 
+<<<<<<< HEAD
         private readonly PowerController PowerController = new PowerController();
 
 
+=======
+>>>>>>> dev
         public MainForm()
         {
             InitializeComponent();
@@ -169,6 +175,7 @@ namespace PowerSet.Models
         /// </summary>
         private void GetRealData()
         {
+<<<<<<< HEAD
             Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000);
             PowerController.OpenI(C.K);
             PowerController.OpenI(C.N);
@@ -176,6 +183,9 @@ namespace PowerSet.Models
             PowerController.OpenI(C.S);
             PowerController.SetI("K",0);
             PowerController.SetI("N", 0);
+=======
+            Prefix.ForEach(p => RealVals[p] = R.NextDouble() * 50);
+>>>>>>> dev
         }
 
         /// <summary>
@@ -186,7 +196,11 @@ namespace PowerSet.Models
             XAxisMargin_Val.Value = 5;
             YAxisMargin_Val.Value = .5M;
             #region 设置图表高度
+<<<<<<< HEAD
             ChartHight_Val.Value = 50;
+=======
+            ChartHight_Val.Value = 25;
+>>>>>>> dev
             SplitLayout.SplitterDistance = (int)(
                 SplitLayout.Size.Height * (Convert.ToDouble(ChartHight_Val.Value) / 100.0)
             );
@@ -344,7 +358,10 @@ namespace PowerSet.Models
 
         private void CloseSysEvent(object sender, EventArgs e)
         {
+<<<<<<< HEAD
             PowerController.CloseThread();
+=======
+>>>>>>> dev
             MainTimer.Dispose();
             Close();
         }

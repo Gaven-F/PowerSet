@@ -45,6 +45,7 @@ D:\PowerSet\PowerSet\obj\Debug\PowerSet.exe.config
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.SuggestedBindingRedirects.cache
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.csproj.Up2Date
 D:\PowerSet\PowerSet\obj\Debug\PowerSet.Models.MainForm.resources
+<<<<<<< HEAD
 D:\PowerSet-240729\PowerSet\bin\Debug\PowerSet.exe.config
 D:\PowerSet-240729\PowerSet\bin\Debug\PowerSet.exe
 D:\PowerSet-240729\PowerSet\bin\Debug\PowerSet.pdb
@@ -70,3 +71,5 @@ D:\PowerSet-240729\PowerSet\obj\Debug\PowerSet.csproj.CoreCompileInputs.cache
 D:\PowerSet-240729\PowerSet\obj\Debug\PowerSet.csproj.CopyComplete
 D:\PowerSet-240729\PowerSet\obj\Debug\PowerSet.exe
 D:\PowerSet-240729\PowerSet\obj\Debug\PowerSet.pdb
+=======
+>>>>>>> dev
