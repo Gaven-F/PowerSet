@@ -1,5 +1,5 @@
 ﻿
-namespace PowerSet.Attribute
+namespace PowerSet.Models
 {
     partial class MainForm
     {
@@ -29,10 +29,7 @@ namespace PowerSet.Attribute
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-			System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
-			System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.SplitLayout = new System.Windows.Forms.SplitContainer();
 			this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -63,7 +60,7 @@ namespace PowerSet.Attribute
 			this.KI_Val = new System.Windows.Forms.Label();
 			this.KCurrentI_Lab = new System.Windows.Forms.Label();
 			this.KI_Lab = new System.Windows.Forms.Label();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.KTube_Val = new System.Windows.Forms.TextBox();
 			this.KParamSetTable = new System.Windows.Forms.DataGridView();
 			this.KAddProcessBtn = new System.Windows.Forms.Button();
 			this.KStartProcess_Num = new System.Windows.Forms.NumericUpDown();
@@ -108,20 +105,12 @@ namespace PowerSet.Attribute
 			// 
 			// Chart
 			// 
-			chartArea1.Name = "ChartArea1";
-			this.Chart.ChartAreas.Add(chartArea1);
 			this.Chart.Dock = System.Windows.Forms.DockStyle.Fill;
-			legend1.Name = "Legend1";
-			this.Chart.Legends.Add(legend1);
 			this.Chart.Location = new System.Drawing.Point(0, 0);
 			this.Chart.Name = "Chart";
-			series1.ChartArea = "ChartArea1";
-			series1.Legend = "Legend1";
-			series1.Name = "Series1";
-			this.Chart.Series.Add(series1);
 			this.Chart.Size = new System.Drawing.Size(1460, 80);
 			this.Chart.TabIndex = 1;
-			this.Chart.Text = "chart1";
+			this.Chart.Text = "Chart";
 			// 
 			// tableLayoutPanel1
 			// 
@@ -323,7 +312,13 @@ namespace PowerSet.Attribute
 			// YAxisMargin_Val
 			// 
 			this.YAxisMargin_Val.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.YAxisMargin_Val.DecimalPlaces = 1;
 			this.YAxisMargin_Val.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.YAxisMargin_Val.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
 			this.YAxisMargin_Val.Location = new System.Drawing.Point(149, 55);
 			this.YAxisMargin_Val.Maximum = new decimal(new int[] {
             99999,
@@ -446,7 +441,7 @@ namespace PowerSet.Attribute
 			this.tableLayoutPanel3.Controls.Add(this.KI_Val, 2, 0);
 			this.tableLayoutPanel3.Controls.Add(this.KCurrentI_Lab, 1, 0);
 			this.tableLayoutPanel3.Controls.Add(this.KI_Lab, 0, 0);
-			this.tableLayoutPanel3.Controls.Add(this.textBox1, 4, 0);
+			this.tableLayoutPanel3.Controls.Add(this.KTube_Val, 4, 0);
 			this.tableLayoutPanel3.Controls.Add(this.KParamSetTable, 0, 2);
 			this.tableLayoutPanel3.Controls.Add(this.KAddProcessBtn, 6, 0);
 			this.tableLayoutPanel3.Controls.Add(this.KStartProcess_Num, 2, 1);
@@ -556,32 +551,32 @@ namespace PowerSet.Attribute
 			this.KI_Lab.Text = "K　电源";
 			this.KI_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// textBox1
+			// KTube_Val
 			// 
-			this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel3.SetColumnSpan(this.textBox1, 2);
-			this.textBox1.Location = new System.Drawing.Point(413, 1);
-			this.textBox1.Margin = new System.Windows.Forms.Padding(0);
-			this.textBox1.MaxLength = 12;
-			this.textBox1.Multiline = true;
-			this.textBox1.Name = "textBox1";
-			this.textBox1.Size = new System.Drawing.Size(205, 40);
-			this.textBox1.TabIndex = 4;
-			this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.KTube_Val.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.tableLayoutPanel3.SetColumnSpan(this.KTube_Val, 2);
+			this.KTube_Val.Location = new System.Drawing.Point(413, 1);
+			this.KTube_Val.Margin = new System.Windows.Forms.Padding(0);
+			this.KTube_Val.MaxLength = 12;
+			this.KTube_Val.Multiline = true;
+			this.KTube_Val.Name = "KTube_Val";
+			this.KTube_Val.Size = new System.Drawing.Size(205, 40);
+			this.KTube_Val.TabIndex = 4;
+			this.KTube_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// KParamSetTable
 			// 
 			this.KParamSetTable.AllowUserToAddRows = false;
 			this.KParamSetTable.AllowUserToDeleteRows = false;
 			this.KParamSetTable.BackgroundColor = System.Drawing.Color.Gainsboro;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.KParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle2.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.KParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
 			this.KParamSetTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.tableLayoutPanel3.SetColumnSpan(this.KParamSetTable, 7);
 			this.KParamSetTable.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -681,7 +676,7 @@ namespace PowerSet.Attribute
         private System.Windows.Forms.Label KCurrentI_Lab;
         private System.Windows.Forms.Label KI_Val;
         private System.Windows.Forms.Label KTubeNum_Label;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox KTube_Val;
         private System.Windows.Forms.DataGridView KParamSetTable;
         private System.Windows.Forms.Button KAddProcessBtn;
         private System.Windows.Forms.NumericUpDown KEndProcess_Num;

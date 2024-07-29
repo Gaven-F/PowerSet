@@ -80,15 +80,18 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Attribute\ColSetAttribute.cs" />
+    <Compile Include="Attributes\ColSetAttribute.cs" />
+    <Compile Include="Main\ConstData.cs" />
     <Compile Include="Main\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Main\ParamProcessSet.cs" />
-    <Compile Include="Main\ParamSet.cs" />
+    <Compile Include="Main\PowerController.cs" />
+    <Compile Include="Models\ParamProcessSet.cs" />
+    <Compile Include="Models\ParamSet.cs" />
+    <Compile Include="Models\RealIData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -120,10 +123,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Scripts\chart.js" />
-    <Content Include="Scripts\chart.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

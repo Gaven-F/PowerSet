@@ -27,7 +27,8 @@ namespace PowerSet
             //Console.WriteLine(d);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Attribute.MainForm());
+            Application.Run(new Models.MainForm());
+            //Application.Run(new Form1());
         }
     }
 
