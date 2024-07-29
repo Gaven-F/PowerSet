@@ -6,13 +6,14 @@ using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using PowerSet.Attributes;
-using PowerSet.Main;
+using PowerSet.Utils;
 using C = PowerSet.Main.ConstData;
 
-namespace PowerSet.Models
+namespace PowerSet.Main
 {
     public partial class MainForm : Form
     {
+        #region Fileds
         private readonly List<string> ReadOnlyTableCol = new List<string> { "周期", "执行次数", "实际电流" };
 
         private readonly List<string> Prefix = new List<string> { C.K, C.N, C.C, C.S };
@@ -45,12 +46,16 @@ namespace PowerSet.Models
 
         private readonly Random R = new Random();
 
-        private long Cnt = 0;
+        private readonly PowerController PowerController = new PowerController();
 
         private readonly Dictionary<string, double> RealVals = new Dictionary<string, double>();
 
-        private readonly PowerController PowerController = new PowerController();
+        private long Cnt = 1;
 
+        private readonly ObservableChanged<bool> Start = new ObservableChanged<bool>(false);
+
+        private DateTime Time = DateTime.Now;
+        #endregion
 
         public MainForm()
         {
@@ -68,7 +73,7 @@ namespace PowerSet.Models
         private void StartProcess()
         {
             // Timer用于更新数据以及部分周期视图更新
-            MainTimer = new System.Threading.Timer(MainTimerAction, null, 0, 1000);
+            MainTimer = new System.Threading.Timer(MainTimerAction, null, 0, 1);
         }
 
         /// <summary>
@@ -79,11 +84,47 @@ namespace PowerSet.Models
             XAxisMargin_Val.ValueChanged += ValChanged;
             YAxisMargin_Val.ValueChanged += ValChanged;
 
+            Start.PropertyChanged += StartChanged;
+
+            Start_Btn.Click += StartBtnClick;
+            End_Btn.Click += StartBtnClick;
+
             Prefix.ForEach(p =>
             {
                 if (Uis.TryGetValue(p + C.UI_I_LAB, out var c) && c is Label)
                     c.Click += LabClick;
             });
+        }
+
+        private void StartBtnClick(object sender, EventArgs e)
+        {
+            Start.Val = !Start.Val;
+            if(Start.Val) Time = DateTime.Now;
+        }
+
+        /// <summary>
+        /// 开始状态改变事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StartChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (sender is ObservableChanged<bool> s)
+            {
+                Console.WriteLine(s.Val);
+                if (End_Btn.InvokeRequired)
+                {
+                    End_Btn.BeginInvoke(new Action(() => End_Btn.Enabled = s.Val));
+                    Saven_Btn.BeginInvoke(new Action(() => Saven_Btn.Enabled = !s.Val));
+                    Start_Btn.BeginInvoke(new Action(() => Start_Btn.Enabled = !s.Val));
+                }
+                else
+                {
+                    End_Btn.Enabled = s.Val;
+                    Saven_Btn.Enabled = !s.Val;
+                    Start_Btn.Enabled = !s.Val;
+                }
+            }
         }
 
         /// <summary>
@@ -115,6 +156,10 @@ namespace PowerSet.Models
         /// <param name="state">可传参</param>
         private void MainTimerAction(object state)
         {
+            if (!Start.Val)
+                return;
+
+            if ((DateTime.Now - Time).TotalSeconds < Cnt) return;
             // TODO: 实际取值逻辑
             GetRealData();
 
@@ -161,7 +206,13 @@ namespace PowerSet.Models
         /// </summary>
         private void AddDataToChart()
         {
-            ChartData.Rows.Add(Cnt, RealVals[C.K], RealVals[C.N], RealVals[C.C], RealVals[C.S]);
+            ChartData.Rows.Add(
+                Cnt + "秒",
+                RealVals[C.K],
+                RealVals[C.N],
+                RealVals[C.C],
+                RealVals[C.S]
+            );
         }
 
         /// <summary>
@@ -169,13 +220,18 @@ namespace PowerSet.Models
         /// </summary>
         private void GetRealData()
         {
+#if DEBUG
+            Prefix.ForEach(p => RealVals[p] = R.NextDouble() * 4);
+
+#else
             Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000);
             PowerController.OpenI(C.K);
             PowerController.OpenI(C.N);
             PowerController.OpenI(C.C);
             PowerController.OpenI(C.S);
-            PowerController.SetI("K",0);
+            PowerController.SetI("K", 0);
             PowerController.SetI("N", 0);
+#endif
         }
 
         /// <summary>
@@ -185,6 +241,7 @@ namespace PowerSet.Models
         {
             XAxisMargin_Val.Value = 5;
             YAxisMargin_Val.Value = .5M;
+
             #region 设置图表高度
             ChartHight_Val.Value = 50;
             SplitLayout.SplitterDistance = (int)(
@@ -195,27 +252,26 @@ namespace PowerSet.Models
             #region 图表初始化及数据绑定
             var chartArea = new ChartArea(C.CHART_BASE_CHARTAREA);
             Prefix.ForEach(p =>
-            {
                 Chart.Series.Add(
                     new Series(p)
                     {
-                        ChartType = SeriesChartType.StepLine,
+                        ChartType = SeriesChartType.Line,
                         Legend = C.BASE_LEGEND,
                         XValueMember = "X",
                         YValueMembers = p + "Y",
                         BorderWidth = 4,
                     }
-                );
-            });
+                )
+            );
             Chart.Legends.Add(new Legend(C.BASE_LEGEND));
             Chart.ChartAreas.Add(chartArea);
             chartArea.AxisX.Interval = Convert.ToDouble(XAxisMargin_Val.Value);
+            chartArea.AxisX.MajorGrid.Interval = Convert.ToDouble(XAxisMargin_Val.Value);
             chartArea.AxisY.Interval = Convert.ToDouble(YAxisMargin_Val.Value);
 
             chartArea.AxisX.Minimum = 1;
 
-            chartArea.AxisX.LabelStyle.Format = "0S";
-            chartArea.AxisY.LabelStyle.Format = "0A";
+            chartArea.AxisY.LabelStyle.Format = "0.0A";
 
             #endregion
 
@@ -225,7 +281,7 @@ namespace PowerSet.Models
             {
                 ChartData.Columns.Add($"{p}Y");
             });
-            //ChartData.Rows.Add(0, 0, 0, 0, 0);
+            ChartData.Rows.Add("0秒", 0, 0, 0, 0);
             ChartData.RowChanged += DataChanged;
             #endregion
         }
@@ -373,6 +429,11 @@ namespace PowerSet.Models
             );
         }
 
+        /// <summary>
+        /// 数据变更后触发的更新操作
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ValChanged(object sender, EventArgs e)
         {
             if (sender is NumericUpDown s && s.Name.Contains("AxisMargin_Val"))

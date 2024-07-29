@@ -1,5 +1,5 @@
 ﻿
-namespace PowerSet.Models
+namespace PowerSet.Main
 {
     partial class MainForm
     {
@@ -345,6 +345,7 @@ namespace PowerSet.Models
 			// End_Btn
 			// 
 			this.End_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.End_Btn.Enabled = false;
 			this.End_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.End_Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
 			this.End_Btn.Location = new System.Drawing.Point(1309, 50);
@@ -379,6 +380,7 @@ namespace PowerSet.Models
 			// Saven_Btn
 			// 
 			this.Saven_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.Saven_Btn.Enabled = false;
 			this.Saven_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Saven_Btn.Location = new System.Drawing.Point(1019, 4);
 			this.Saven_Btn.Name = "Saven_Btn";

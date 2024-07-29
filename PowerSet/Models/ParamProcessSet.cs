@@ -1,6 +1,6 @@
 ﻿using PowerSet.Attributes;
 
-namespace PowerSet.Models
+namespace PowerSet.Main
 {
     class ParamProcessSet : GF_SqlHelper.BaseClass.BaseTable
     {

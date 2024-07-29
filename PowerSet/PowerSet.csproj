@@ -88,11 +88,13 @@
     <Compile Include="Main\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Main\PowerController.cs" />
     <Compile Include="Models\ParamProcessSet.cs" />
     <Compile Include="Models\ParamSet.cs" />
     <Compile Include="Models\RealIData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\ObservalableChanged.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

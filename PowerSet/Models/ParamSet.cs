@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PowerSet.Models
+namespace PowerSet.Main
 {
     class ParamSet : GF_SqlHelper.BaseClass.BaseTable
     {

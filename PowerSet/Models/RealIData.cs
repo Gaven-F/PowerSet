@@ -1,6 +1,6 @@
 ﻿using GF_SqlHelper.BaseClass;
 
-namespace PowerSet.Models
+namespace PowerSet.Main
 {
 	internal class RealIData : BaseTable
 	{

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PowerSet.Main
 {
@@ -66,6 +66,7 @@ namespace PowerSet.Main
         private static int CurOldVal_Na; //Na电源
         private static int CurOldVal_Cs; //Cs电源
         private static int CurOldVal_Sb; //Sb电源
+
         //private static int CurOldVal_DY; //灯源电源
 
         //电源电流当前设定值
@@ -73,6 +74,7 @@ namespace PowerSet.Main
         private static int CurSetVal_Na; //Na电源
         private static int CurSetVal_Cs; //Cs电源
         private static int CurSetVal_Sb; //Sb电源
+
         //private static int CurSetVal_DY; //灯源电源
 
         //电源电流返回值（读取值）
@@ -80,6 +82,7 @@ namespace PowerSet.Main
         private static int CurReadVal_Na; //Na电源
         private static int CurReadVal_Cs; //Cs电源
         private static int CurReadVal_Sb; //Sb电源
+
         //private static int CurReadVal_DY; //灯源电源
 
         //电源开关标志，old表示上次的状态，new表示当前状态,false表示关，true表示开
@@ -87,12 +90,14 @@ namespace PowerSet.Main
         private static bool NewOnFlag_Na; //Na电源
         private static bool NewOnFlag_Cs; //Cs电源
         private static bool NewOnFlag_Sb; //Sb电源
+
         //private static bool NewOnFlag_DY; //灯源电源
 
         private static bool OldOnFalg_K; //K电源
         private static bool OldOnFalg_Na; //Na电源
         private static bool OldOnFalg_Cs; //Cs电源
         private static bool OldOnFalg_Sb; //Sb电源
+
         //private static bool OldOnFalg_DY; //灯源电源
 
 
@@ -104,6 +109,7 @@ namespace PowerSet.Main
         private static bool CsoffFlag; //叉掉弹窗时，设置电流值为零的标志
         private static bool Sb_Vlot_Flag; //Sb电源电压设定标志
         private static bool SboffFlag; //叉掉弹窗时，设置电流值为零的标志
+
         //private static bool DY_Vlot_Flag; //灯源电源电压设定标志
         //private static bool DYoffFlag; //叉掉弹窗时，设置电流值为零的标志
 
@@ -111,13 +117,19 @@ namespace PowerSet.Main
         private static bool NaOnFlag; //K电源开标志。
         private static bool CsOnFlag; //K电源开标志。
         private static bool SbOnFlag; //K电源开标志。
+
         //private static bool DYOnFlag; //K电源开标志。
 
 
-        private static int KVoltage = 25, NaVoltage = 25, CsVoltage = 25, SbVoltage = 25; //电源电压
+        private static int KVoltage = 25,
+            NaVoltage = 25,
+            CsVoltage = 25,
+            SbVoltage = 25; //电源电压
+
         //读数异常标志
         private static bool[] ReadErrorFlag = new bool[5];
         private static int DelayTimeNet = 100; //网络端口收发信息延时
+
         //private static int DelayTimeNet280 = 280; //2022-9-14 由于电源开关失控，故将延时提升到110ms,110ms不够，于是将延时改为280
         //private static int DelayTimeSerial = 100; //串口收发信息延时
         private static int DelayReconnectiuion = 1500; //断线重连延时
@@ -137,11 +149,15 @@ namespace PowerSet.Main
             Thread2,
             Thread3,
             Thread4;
+
         public PowerController()
         {
-            NetConnections();
+            try
+            {
+                NetConnections();
+            }
+            catch (Exception) { }
         }
-
 
         /// <summary>
         /// 网络连接函数
@@ -251,7 +267,6 @@ namespace PowerSet.Main
                                 {
                                     ReadErrorFlag[0] = false;
                                     CurOldVal_K = 0; //保证掉电重启后，能恢复电源值。
-
                                 }
                             }
                         }
@@ -364,7 +379,6 @@ namespace PowerSet.Main
                         KOnFlag = false;
                         continue;
                     }
-
 
                     if (NewOnFlag_K != OldOnFalg_K)
                     {
@@ -535,9 +549,7 @@ namespace PowerSet.Main
                                     ErrorFlag1 = true;
                                 }
                             }
-                            else
-                            {
-                            }
+                            else { }
                         }
                     }
                     //设置电压
@@ -800,9 +812,7 @@ namespace PowerSet.Main
                                 && arrServerRecMsg2[2] == 0x00
                                 && arrServerRecMsg2[3] == 0x1B
                             ) //判断帧头 01 06 00 1B
-                            {
-
-                            }
+                            { }
                             else
                             {
                                 NewPower_OF_or_ON(1, 2);
@@ -819,9 +829,7 @@ namespace PowerSet.Main
                                         && arrServerRecMsg2[2] == 0x00
                                         && arrServerRecMsg2[3] == 0x1B
                                     ) //判断帧头 01 06 00 1B
-                                    {
-
-                                    }
+                                    { }
                                 }
                             }
                         }
@@ -841,9 +849,7 @@ namespace PowerSet.Main
                                     && arrServerRecMsg2[2] == 0x00
                                     && arrServerRecMsg2[3] == 0x1B
                                 ) //判断帧头 01 06 00 1B
-                                {
-
-                                }
+                                { }
                             }
                         }
                         NaOnFlag = false;
@@ -1027,9 +1033,7 @@ namespace PowerSet.Main
                                     ErrorFlag2 = true;
                                 }
                             }
-                            else
-                            {
-                            }
+                            else { }
                         }
                     }
                     //设置电压
@@ -1298,8 +1302,7 @@ namespace PowerSet.Main
                                 && arrServerRecMsg3[2] == 0x00
                                 && arrServerRecMsg3[3] == 0x1B
                             ) //判断帧头 01 06 00 1B
-                            {
-                            }
+                            { }
                             else
                             {
                                 NewPower_OF_or_ON(1, 3);
@@ -1316,8 +1319,7 @@ namespace PowerSet.Main
                                         && arrServerRecMsg3[2] == 0x00
                                         && arrServerRecMsg3[3] == 0x1B
                                     ) //判断帧头 01 06 00 1B
-                                    {
-                                    }
+                                    { }
                                 }
                             }
                         }
@@ -1337,8 +1339,7 @@ namespace PowerSet.Main
                                     && arrServerRecMsg3[2] == 0x00
                                     && arrServerRecMsg3[3] == 0x1B
                                 ) //判断帧头 01 06 00 1B
-                                {
-                                }
+                                { }
                             }
                         }
                         CsOnFlag = false;
@@ -1522,9 +1523,7 @@ namespace PowerSet.Main
                                     ErrorFlag3 = true;
                                 }
                             }
-                            else
-                            {
-                            }
+                            else { }
                         }
                     }
                     //设置电压
@@ -1790,8 +1789,7 @@ namespace PowerSet.Main
                                 && arrServerRecMsg4[2] == 0x00
                                 && arrServerRecMsg4[3] == 0x1B
                             ) //判断帧头 01 06 00 1B
-                            {
-                            }
+                            { }
                             else
                             {
                                 NewPower_OF_or_ON(1, 4);
@@ -1808,8 +1806,7 @@ namespace PowerSet.Main
                                         && arrServerRecMsg4[2] == 0x00
                                         && arrServerRecMsg4[3] == 0x1B
                                     ) //判断帧头 01 06 00 1B
-                                    {
-                                    }
+                                    { }
                                 }
                             }
                         }
@@ -1829,8 +1826,7 @@ namespace PowerSet.Main
                                     && arrServerRecMsg4[2] == 0x00
                                     && arrServerRecMsg4[3] == 0x1B
                                 ) //判断帧头 01 06 00 1B
-                                {
-                                }
+                                { }
                             }
                         }
                         SbOnFlag = false;
@@ -2013,9 +2009,7 @@ namespace PowerSet.Main
                                     ErrorFlag4 = true;
                                 }
                             }
-                            else
-                            {
-                            }
+                            else { }
                         }
                     }
 
@@ -2159,8 +2153,6 @@ namespace PowerSet.Main
             }
         }
 
-
-
         /// <summary>
         /// 电压设置函数
         /// </summary>
@@ -2205,104 +2197,104 @@ namespace PowerSet.Main
             switch (PoNo)
             {
                 case 1:
-                    {
-                        //设置电源的字节参数
-                        Send_VCmdByte1[0] = 0x01; //
-                        Send_VCmdByte1[1] = 0x10; //功能码10表示预设寄存器
-                        Send_VCmdByte1[2] = 0x00; //
-                        Send_VCmdByte1[3] = 0x01; //电压地址
-                        Send_VCmdByte1[4] = 0x00; //
-                        Send_VCmdByte1[5] = 0x02; //2个寄存器
-                        Send_VCmdByte1[6] = 0x04; //4个字节数据
-                        Send_VCmdByte1[7] = VSetValue[0]; //4个数据
-                        Send_VCmdByte1[8] = VSetValue[1];
-                        Send_VCmdByte1[9] = VSetValue[2];
-                        Send_VCmdByte1[10] = VSetValue[3];
+                {
+                    //设置电源的字节参数
+                    Send_VCmdByte1[0] = 0x01; //
+                    Send_VCmdByte1[1] = 0x10; //功能码10表示预设寄存器
+                    Send_VCmdByte1[2] = 0x00; //
+                    Send_VCmdByte1[3] = 0x01; //电压地址
+                    Send_VCmdByte1[4] = 0x00; //
+                    Send_VCmdByte1[5] = 0x02; //2个寄存器
+                    Send_VCmdByte1[6] = 0x04; //4个字节数据
+                    Send_VCmdByte1[7] = VSetValue[0]; //4个数据
+                    Send_VCmdByte1[8] = VSetValue[1];
+                    Send_VCmdByte1[9] = VSetValue[2];
+                    Send_VCmdByte1[10] = VSetValue[3];
 
-                        CRCVal = CRC16(Send_VCmdByte1, 11); //CRC校验
-                        Send_VCmdByte1[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_VCmdByte1[12] = (byte)(CRCVal / 256);
+                    CRCVal = CRC16(Send_VCmdByte1, 11); //CRC校验
+                    Send_VCmdByte1[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_VCmdByte1[12] = (byte)(CRCVal / 256);
 
-                        break;
-                    }
+                    break;
+                }
                 case 2:
-                    {
-                        //设置电源的字节参数
-                        Send_VCmdByte2[0] = 0x01; //
-                        Send_VCmdByte2[1] = 0x10; //功能码10表示预设寄存器
-                        Send_VCmdByte2[2] = 0x00; //
-                        Send_VCmdByte2[3] = 0x01; //电压地址
-                        Send_VCmdByte2[4] = 0x00; //
-                        Send_VCmdByte2[5] = 0x02; //2个寄存器
-                        Send_VCmdByte2[6] = 0x04; //4个字节数据
-                        Send_VCmdByte2[7] = VSetValue[0]; //4个数据
-                        Send_VCmdByte2[8] = VSetValue[1];
-                        Send_VCmdByte2[9] = VSetValue[2];
-                        Send_VCmdByte2[10] = VSetValue[3];
+                {
+                    //设置电源的字节参数
+                    Send_VCmdByte2[0] = 0x01; //
+                    Send_VCmdByte2[1] = 0x10; //功能码10表示预设寄存器
+                    Send_VCmdByte2[2] = 0x00; //
+                    Send_VCmdByte2[3] = 0x01; //电压地址
+                    Send_VCmdByte2[4] = 0x00; //
+                    Send_VCmdByte2[5] = 0x02; //2个寄存器
+                    Send_VCmdByte2[6] = 0x04; //4个字节数据
+                    Send_VCmdByte2[7] = VSetValue[0]; //4个数据
+                    Send_VCmdByte2[8] = VSetValue[1];
+                    Send_VCmdByte2[9] = VSetValue[2];
+                    Send_VCmdByte2[10] = VSetValue[3];
 
-                        CRCVal = CRC16(Send_VCmdByte2, 11); //CRC校验
-                        Send_VCmdByte2[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_VCmdByte2[12] = (byte)(CRCVal / 256);
+                    CRCVal = CRC16(Send_VCmdByte2, 11); //CRC校验
+                    Send_VCmdByte2[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_VCmdByte2[12] = (byte)(CRCVal / 256);
 
-                        break;
-                    }
+                    break;
+                }
                 case 3:
-                    {
-                        Send_VCmdByte3[0] = 0x01; //
-                        Send_VCmdByte3[1] = 0x10; //功能码10表示预设寄存器
-                        Send_VCmdByte3[2] = 0x00; //
-                        Send_VCmdByte3[3] = 0x01; //电压地址
-                        Send_VCmdByte3[4] = 0x00; //
-                        Send_VCmdByte3[5] = 0x02; //2个寄存器
-                        Send_VCmdByte3[6] = 0x04; //4个字节数据
-                        Send_VCmdByte3[7] = VSetValue[0]; //4个数据
-                        Send_VCmdByte3[8] = VSetValue[1];
-                        Send_VCmdByte3[9] = VSetValue[2];
-                        Send_VCmdByte3[10] = VSetValue[3];
+                {
+                    Send_VCmdByte3[0] = 0x01; //
+                    Send_VCmdByte3[1] = 0x10; //功能码10表示预设寄存器
+                    Send_VCmdByte3[2] = 0x00; //
+                    Send_VCmdByte3[3] = 0x01; //电压地址
+                    Send_VCmdByte3[4] = 0x00; //
+                    Send_VCmdByte3[5] = 0x02; //2个寄存器
+                    Send_VCmdByte3[6] = 0x04; //4个字节数据
+                    Send_VCmdByte3[7] = VSetValue[0]; //4个数据
+                    Send_VCmdByte3[8] = VSetValue[1];
+                    Send_VCmdByte3[9] = VSetValue[2];
+                    Send_VCmdByte3[10] = VSetValue[3];
 
-                        CRCVal = CRC16(Send_VCmdByte3, 11); //CRC校验
-                        Send_VCmdByte3[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_VCmdByte3[12] = (byte)(CRCVal / 256);
+                    CRCVal = CRC16(Send_VCmdByte3, 11); //CRC校验
+                    Send_VCmdByte3[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_VCmdByte3[12] = (byte)(CRCVal / 256);
 
-                        break;
-                    }
+                    break;
+                }
                 case 4:
-                    {
-                        Send_VCmdByte4[0] = 0x01; //
-                        Send_VCmdByte4[1] = 0x10; //功能码10表示预设寄存器
-                        Send_VCmdByte4[2] = 0x00; //
-                        Send_VCmdByte4[3] = 0x01; //电压地址
-                        Send_VCmdByte4[4] = 0x00; //
-                        Send_VCmdByte4[5] = 0x02; //2个寄存器
-                        Send_VCmdByte4[6] = 0x04; //4个字节数据
-                        Send_VCmdByte4[7] = VSetValue[0]; //4个数据
-                        Send_VCmdByte4[8] = VSetValue[1];
-                        Send_VCmdByte4[9] = VSetValue[2];
-                        Send_VCmdByte4[10] = VSetValue[3];
+                {
+                    Send_VCmdByte4[0] = 0x01; //
+                    Send_VCmdByte4[1] = 0x10; //功能码10表示预设寄存器
+                    Send_VCmdByte4[2] = 0x00; //
+                    Send_VCmdByte4[3] = 0x01; //电压地址
+                    Send_VCmdByte4[4] = 0x00; //
+                    Send_VCmdByte4[5] = 0x02; //2个寄存器
+                    Send_VCmdByte4[6] = 0x04; //4个字节数据
+                    Send_VCmdByte4[7] = VSetValue[0]; //4个数据
+                    Send_VCmdByte4[8] = VSetValue[1];
+                    Send_VCmdByte4[9] = VSetValue[2];
+                    Send_VCmdByte4[10] = VSetValue[3];
 
-                        CRCVal = CRC16(Send_VCmdByte4, 11); //CRC校验
-                        Send_VCmdByte4[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_VCmdByte4[12] = (byte)(CRCVal / 256);
+                    CRCVal = CRC16(Send_VCmdByte4, 11); //CRC校验
+                    Send_VCmdByte4[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_VCmdByte4[12] = (byte)(CRCVal / 256);
 
-                        break;
-                    }
+                    break;
+                }
                 case 5:
-                    {
-                        //设置电源的字节参数
-                        Send_VCmdByte5[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_VCmdByte5[1] = 0x06; //功能码06表示预设单个寄存器
-                        Send_VCmdByte5[2] = 0x00; //2-3位是参数地址
-                        Send_VCmdByte5[3] = 0x03; //00 03表示设定电压
-                                                  //电源电压值数据data=(65535*Vx)/Vmax
-                        Send_VCmdByte5[4] = (byte)(Vdata / 256); //电压值高8位
-                        Send_VCmdByte5[5] = (byte)(Vdata % 256); //电压低8位
+                {
+                    //设置电源的字节参数
+                    Send_VCmdByte5[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_VCmdByte5[1] = 0x06; //功能码06表示预设单个寄存器
+                    Send_VCmdByte5[2] = 0x00; //2-3位是参数地址
+                    Send_VCmdByte5[3] = 0x03; //00 03表示设定电压
+                    //电源电压值数据data=(65535*Vx)/Vmax
+                    Send_VCmdByte5[4] = (byte)(Vdata / 256); //电压值高8位
+                    Send_VCmdByte5[5] = (byte)(Vdata % 256); //电压低8位
 
-                        CRCVal = CRC16(Send_VCmdByte5, 6); //CRC校验
-                        Send_VCmdByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_VCmdByte5[7] = (byte)(CRCVal / 256);
+                    CRCVal = CRC16(Send_VCmdByte5, 6); //CRC校验
+                    Send_VCmdByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_VCmdByte5[7] = (byte)(CRCVal / 256);
 
-                        break;
-                    }
+                    break;
+                }
                 default:
                     break;
             }
@@ -2320,81 +2312,81 @@ namespace PowerSet.Main
             switch (PoNo)
             {
                 case 1:
-                    {
-                        Send_ReadCmdByte1[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_ReadCmdByte1[1] = 0x03;
-                        Send_ReadCmdByte1[2] = 0x00;
-                        Send_ReadCmdByte1[3] = 0x1F;
+                {
+                    Send_ReadCmdByte1[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_ReadCmdByte1[1] = 0x03;
+                    Send_ReadCmdByte1[2] = 0x00;
+                    Send_ReadCmdByte1[3] = 0x1F;
 
-                        Send_ReadCmdByte1[4] = 0x00;
-                        Send_ReadCmdByte1[5] = 0x02;
+                    Send_ReadCmdByte1[4] = 0x00;
+                    Send_ReadCmdByte1[5] = 0x02;
 
-                        CRCVal = CRC16(Send_ReadCmdByte1, 6); //CRC校验
-                        Send_ReadCmdByte1[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ReadCmdByte1[7] = (byte)(CRCVal / 256);
+                    CRCVal = CRC16(Send_ReadCmdByte1, 6); //CRC校验
+                    Send_ReadCmdByte1[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ReadCmdByte1[7] = (byte)(CRCVal / 256);
 
-                        break;
-                    }
+                    break;
+                }
                 case 2:
-                    {
-                        Send_ReadCmdByte2[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_ReadCmdByte2[1] = 0x03;
-                        Send_ReadCmdByte2[2] = 0x00;
-                        Send_ReadCmdByte2[3] = 0x1F;
+                {
+                    Send_ReadCmdByte2[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_ReadCmdByte2[1] = 0x03;
+                    Send_ReadCmdByte2[2] = 0x00;
+                    Send_ReadCmdByte2[3] = 0x1F;
 
-                        Send_ReadCmdByte2[4] = 0x00;
-                        Send_ReadCmdByte2[5] = 0x02;
+                    Send_ReadCmdByte2[4] = 0x00;
+                    Send_ReadCmdByte2[5] = 0x02;
 
-                        CRCVal = CRC16(Send_ReadCmdByte2, 6); //CRC校验
-                        Send_ReadCmdByte2[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ReadCmdByte2[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_ReadCmdByte2, 6); //CRC校验
+                    Send_ReadCmdByte2[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ReadCmdByte2[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 3:
-                    {
-                        Send_ReadCmdByte3[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_ReadCmdByte3[1] = 0x03;
-                        Send_ReadCmdByte3[2] = 0x00;
-                        Send_ReadCmdByte3[3] = 0x1F;
+                {
+                    Send_ReadCmdByte3[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_ReadCmdByte3[1] = 0x03;
+                    Send_ReadCmdByte3[2] = 0x00;
+                    Send_ReadCmdByte3[3] = 0x1F;
 
-                        Send_ReadCmdByte3[4] = 0x00;
-                        Send_ReadCmdByte3[5] = 0x02;
+                    Send_ReadCmdByte3[4] = 0x00;
+                    Send_ReadCmdByte3[5] = 0x02;
 
-                        CRCVal = CRC16(Send_ReadCmdByte3, 6); //CRC校验
-                        Send_ReadCmdByte3[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ReadCmdByte3[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_ReadCmdByte3, 6); //CRC校验
+                    Send_ReadCmdByte3[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ReadCmdByte3[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 4:
-                    {
-                        Send_ReadCmdByte4[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_ReadCmdByte4[1] = 0x03;
-                        Send_ReadCmdByte4[2] = 0x00;
-                        Send_ReadCmdByte4[3] = 0x1F;
+                {
+                    Send_ReadCmdByte4[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_ReadCmdByte4[1] = 0x03;
+                    Send_ReadCmdByte4[2] = 0x00;
+                    Send_ReadCmdByte4[3] = 0x1F;
 
-                        Send_ReadCmdByte4[4] = 0x00;
-                        Send_ReadCmdByte4[5] = 0x02;
+                    Send_ReadCmdByte4[4] = 0x00;
+                    Send_ReadCmdByte4[5] = 0x02;
 
-                        CRCVal = CRC16(Send_ReadCmdByte4, 6); //CRC校验
-                        Send_ReadCmdByte4[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ReadCmdByte4[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_ReadCmdByte4, 6); //CRC校验
+                    Send_ReadCmdByte4[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ReadCmdByte4[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 5:
-                    {
-                        Send_ReadCmdByte5[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_ReadCmdByte5[1] = 0x03;
-                        Send_ReadCmdByte5[2] = 0x00;
-                        Send_ReadCmdByte5[3] = 0x01;
+                {
+                    Send_ReadCmdByte5[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_ReadCmdByte5[1] = 0x03;
+                    Send_ReadCmdByte5[2] = 0x00;
+                    Send_ReadCmdByte5[3] = 0x01;
 
-                        Send_ReadCmdByte5[4] = 0x00;
-                        Send_ReadCmdByte5[5] = 0x01;
+                    Send_ReadCmdByte5[4] = 0x00;
+                    Send_ReadCmdByte5[5] = 0x01;
 
-                        CRCVal = CRC16(Send_ReadCmdByte5, 6); //CRC校验
-                        Send_ReadCmdByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ReadCmdByte5[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_ReadCmdByte5, 6); //CRC校验
+                    Send_ReadCmdByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ReadCmdByte5[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 default:
                     break;
             }
@@ -2412,80 +2404,80 @@ namespace PowerSet.Main
             switch (PoNo)
             {
                 case 1:
-                    {
-                        Send_OFForONByte1[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_OFForONByte1[1] = 0x06;
-                        Send_OFForONByte1[2] = 0x00;
-                        Send_OFForONByte1[3] = 0x1B;
+                {
+                    Send_OFForONByte1[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_OFForONByte1[1] = 0x06;
+                    Send_OFForONByte1[2] = 0x00;
+                    Send_OFForONByte1[3] = 0x1B;
 
-                        Send_OFForONByte1[4] = 0x00;
-                        Send_OFForONByte1[5] = (byte)OFForON;
+                    Send_OFForONByte1[4] = 0x00;
+                    Send_OFForONByte1[5] = (byte)OFForON;
 
-                        CRCVal = CRC16(Send_OFForONByte1, 6); //CRC校验
-                        Send_OFForONByte1[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_OFForONByte1[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_OFForONByte1, 6); //CRC校验
+                    Send_OFForONByte1[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_OFForONByte1[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 2:
-                    {
-                        Send_OFForONByte2[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_OFForONByte2[1] = 0x06;
-                        Send_OFForONByte2[2] = 0x00;
-                        Send_OFForONByte2[3] = 0x1B;
+                {
+                    Send_OFForONByte2[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_OFForONByte2[1] = 0x06;
+                    Send_OFForONByte2[2] = 0x00;
+                    Send_OFForONByte2[3] = 0x1B;
 
-                        Send_OFForONByte2[4] = 0x00;
-                        Send_OFForONByte2[5] = (byte)OFForON;
+                    Send_OFForONByte2[4] = 0x00;
+                    Send_OFForONByte2[5] = (byte)OFForON;
 
-                        CRCVal = CRC16(Send_OFForONByte2, 6); //CRC校验
-                        Send_OFForONByte2[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_OFForONByte2[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_OFForONByte2, 6); //CRC校验
+                    Send_OFForONByte2[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_OFForONByte2[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 3:
-                    {
-                        Send_OFForONByte3[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_OFForONByte3[1] = 0x06;
-                        Send_OFForONByte3[2] = 0x00;
-                        Send_OFForONByte3[3] = 0x1B;
+                {
+                    Send_OFForONByte3[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_OFForONByte3[1] = 0x06;
+                    Send_OFForONByte3[2] = 0x00;
+                    Send_OFForONByte3[3] = 0x1B;
 
-                        Send_OFForONByte3[4] = 0x00;
-                        Send_OFForONByte3[5] = (byte)OFForON;
+                    Send_OFForONByte3[4] = 0x00;
+                    Send_OFForONByte3[5] = (byte)OFForON;
 
-                        CRCVal = CRC16(Send_OFForONByte3, 6); //CRC校验
-                        Send_OFForONByte3[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_OFForONByte3[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_OFForONByte3, 6); //CRC校验
+                    Send_OFForONByte3[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_OFForONByte3[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 4:
-                    {
-                        Send_OFForONByte4[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_OFForONByte4[1] = 0x06;
-                        Send_OFForONByte4[2] = 0x00;
-                        Send_OFForONByte4[3] = 0x1B;
+                {
+                    Send_OFForONByte4[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_OFForONByte4[1] = 0x06;
+                    Send_OFForONByte4[2] = 0x00;
+                    Send_OFForONByte4[3] = 0x1B;
 
-                        Send_OFForONByte4[4] = 0x00;
-                        Send_OFForONByte4[5] = (byte)OFForON;
+                    Send_OFForONByte4[4] = 0x00;
+                    Send_OFForONByte4[5] = (byte)OFForON;
 
-                        CRCVal = CRC16(Send_OFForONByte4, 6); //CRC校验
-                        Send_OFForONByte4[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_OFForONByte4[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_OFForONByte4, 6); //CRC校验
+                    Send_OFForONByte4[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_OFForONByte4[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 5:
-                    {
-                        Send_OFForONByte5[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_OFForONByte5[1] = 0x06;
-                        Send_OFForONByte5[2] = 0x00;
-                        Send_OFForONByte5[3] = 0x05;
+                {
+                    Send_OFForONByte5[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_OFForONByte5[1] = 0x06;
+                    Send_OFForONByte5[2] = 0x00;
+                    Send_OFForONByte5[3] = 0x05;
 
-                        Send_OFForONByte5[4] = 0x00;
-                        Send_OFForONByte5[5] = (byte)OFForON;
+                    Send_OFForONByte5[4] = 0x00;
+                    Send_OFForONByte5[5] = (byte)OFForON;
 
-                        CRCVal = CRC16(Send_OFForONByte5, 6); //CRC校验
-                        Send_OFForONByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_OFForONByte5[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_OFForONByte5, 6); //CRC校验
+                    Send_OFForONByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_OFForONByte5[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 default:
                     break;
             }
@@ -2534,101 +2526,101 @@ namespace PowerSet.Main
             switch (PoNo)
             {
                 case 1:
-                    {
-                        //设置电源的字节参数
-                        Send_ICmdByte1[0] = 0x01; //功能码10表示预设寄存器
-                        Send_ICmdByte1[1] = 0x10;
-                        Send_ICmdByte1[2] = 0x00;
-                        Send_ICmdByte1[3] = 0x03; //电流地址
+                {
+                    //设置电源的字节参数
+                    Send_ICmdByte1[0] = 0x01; //功能码10表示预设寄存器
+                    Send_ICmdByte1[1] = 0x10;
+                    Send_ICmdByte1[2] = 0x00;
+                    Send_ICmdByte1[3] = 0x03; //电流地址
 
-                        Send_ICmdByte1[4] = 0x00; //
-                        Send_ICmdByte1[5] = 0x02; //2个寄存器
-                        Send_ICmdByte1[6] = 0x04; //4个字节数据
-                        Send_ICmdByte1[7] = ISetValue[0]; //4个数据
-                        Send_ICmdByte1[8] = ISetValue[1];
-                        Send_ICmdByte1[9] = ISetValue[2];
-                        Send_ICmdByte1[10] = ISetValue[3];
-                        CRCVal = CRC16(Send_ICmdByte1, 11); //CRC校验
-                        Send_ICmdByte1[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ICmdByte1[12] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    Send_ICmdByte1[4] = 0x00; //
+                    Send_ICmdByte1[5] = 0x02; //2个寄存器
+                    Send_ICmdByte1[6] = 0x04; //4个字节数据
+                    Send_ICmdByte1[7] = ISetValue[0]; //4个数据
+                    Send_ICmdByte1[8] = ISetValue[1];
+                    Send_ICmdByte1[9] = ISetValue[2];
+                    Send_ICmdByte1[10] = ISetValue[3];
+                    CRCVal = CRC16(Send_ICmdByte1, 11); //CRC校验
+                    Send_ICmdByte1[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ICmdByte1[12] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 2:
-                    {
-                        //设置电源的字节参数
-                        Send_ICmdByte2[0] = 0x01; //功能码10表示预设寄存器
-                        Send_ICmdByte2[1] = 0x10;
-                        Send_ICmdByte2[2] = 0x00;
-                        Send_ICmdByte2[3] = 0x03; //电流地址
+                {
+                    //设置电源的字节参数
+                    Send_ICmdByte2[0] = 0x01; //功能码10表示预设寄存器
+                    Send_ICmdByte2[1] = 0x10;
+                    Send_ICmdByte2[2] = 0x00;
+                    Send_ICmdByte2[3] = 0x03; //电流地址
 
-                        Send_ICmdByte2[4] = 0x00; //
-                        Send_ICmdByte2[5] = 0x02; //2个寄存器
-                        Send_ICmdByte2[6] = 0x04; //4个字节数据
-                        Send_ICmdByte2[7] = ISetValue[0]; //4个数据
-                        Send_ICmdByte2[8] = ISetValue[1];
-                        Send_ICmdByte2[9] = ISetValue[2];
-                        Send_ICmdByte2[10] = ISetValue[3];
-                        CRCVal = CRC16(Send_ICmdByte2, 11); //CRC校验
-                        Send_ICmdByte2[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ICmdByte2[12] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    Send_ICmdByte2[4] = 0x00; //
+                    Send_ICmdByte2[5] = 0x02; //2个寄存器
+                    Send_ICmdByte2[6] = 0x04; //4个字节数据
+                    Send_ICmdByte2[7] = ISetValue[0]; //4个数据
+                    Send_ICmdByte2[8] = ISetValue[1];
+                    Send_ICmdByte2[9] = ISetValue[2];
+                    Send_ICmdByte2[10] = ISetValue[3];
+                    CRCVal = CRC16(Send_ICmdByte2, 11); //CRC校验
+                    Send_ICmdByte2[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ICmdByte2[12] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 3:
-                    {
-                        //设置电源的字节参数
-                        Send_ICmdByte3[0] = 0x01; //功能码10表示预设寄存器
-                        Send_ICmdByte3[1] = 0x10;
-                        Send_ICmdByte3[2] = 0x00;
-                        Send_ICmdByte3[3] = 0x03; //电流地址
+                {
+                    //设置电源的字节参数
+                    Send_ICmdByte3[0] = 0x01; //功能码10表示预设寄存器
+                    Send_ICmdByte3[1] = 0x10;
+                    Send_ICmdByte3[2] = 0x00;
+                    Send_ICmdByte3[3] = 0x03; //电流地址
 
-                        Send_ICmdByte3[4] = 0x00; //
-                        Send_ICmdByte3[5] = 0x02; //2个寄存器
-                        Send_ICmdByte3[6] = 0x04; //4个字节数据
-                        Send_ICmdByte3[7] = ISetValue[0]; //4个数据
-                        Send_ICmdByte3[8] = ISetValue[1];
-                        Send_ICmdByte3[9] = ISetValue[2];
-                        Send_ICmdByte3[10] = ISetValue[3];
-                        CRCVal = CRC16(Send_ICmdByte3, 11); //CRC校验
-                        Send_ICmdByte3[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ICmdByte3[12] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    Send_ICmdByte3[4] = 0x00; //
+                    Send_ICmdByte3[5] = 0x02; //2个寄存器
+                    Send_ICmdByte3[6] = 0x04; //4个字节数据
+                    Send_ICmdByte3[7] = ISetValue[0]; //4个数据
+                    Send_ICmdByte3[8] = ISetValue[1];
+                    Send_ICmdByte3[9] = ISetValue[2];
+                    Send_ICmdByte3[10] = ISetValue[3];
+                    CRCVal = CRC16(Send_ICmdByte3, 11); //CRC校验
+                    Send_ICmdByte3[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ICmdByte3[12] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 4:
-                    {
-                        //设置电源的字节参数
-                        Send_ICmdByte4[0] = 0x01; //功能码10表示预设寄存器
-                        Send_ICmdByte4[1] = 0x10;
-                        Send_ICmdByte4[2] = 0x00;
-                        Send_ICmdByte4[3] = 0x03; //电流地址
+                {
+                    //设置电源的字节参数
+                    Send_ICmdByte4[0] = 0x01; //功能码10表示预设寄存器
+                    Send_ICmdByte4[1] = 0x10;
+                    Send_ICmdByte4[2] = 0x00;
+                    Send_ICmdByte4[3] = 0x03; //电流地址
 
-                        Send_ICmdByte4[4] = 0x00; //
-                        Send_ICmdByte4[5] = 0x02; //2个寄存器
-                        Send_ICmdByte4[6] = 0x04; //4个字节数据
-                        Send_ICmdByte4[7] = ISetValue[0]; //4个数据
-                        Send_ICmdByte4[8] = ISetValue[1];
-                        Send_ICmdByte4[9] = ISetValue[2];
-                        Send_ICmdByte4[10] = ISetValue[3];
-                        CRCVal = CRC16(Send_ICmdByte4, 11); //CRC校验
-                        Send_ICmdByte4[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ICmdByte4[12] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    Send_ICmdByte4[4] = 0x00; //
+                    Send_ICmdByte4[5] = 0x02; //2个寄存器
+                    Send_ICmdByte4[6] = 0x04; //4个字节数据
+                    Send_ICmdByte4[7] = ISetValue[0]; //4个数据
+                    Send_ICmdByte4[8] = ISetValue[1];
+                    Send_ICmdByte4[9] = ISetValue[2];
+                    Send_ICmdByte4[10] = ISetValue[3];
+                    CRCVal = CRC16(Send_ICmdByte4, 11); //CRC校验
+                    Send_ICmdByte4[11] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ICmdByte4[12] = (byte)(CRCVal / 256);
+                    break;
+                }
                 case 5:
-                    {
-                        //设置电源的字节参数
-                        Send_ICmdByte5[0] = 0x01; //(byte)RD_ADDR.Value;
-                        Send_ICmdByte5[1] = 0x06; //功能码06表示预设单个寄存器
-                        Send_ICmdByte5[2] = 0x00; //
-                        Send_ICmdByte5[3] = 0x04; //00 04表示设定电流
+                {
+                    //设置电源的字节参数
+                    Send_ICmdByte5[0] = 0x01; //(byte)RD_ADDR.Value;
+                    Send_ICmdByte5[1] = 0x06; //功能码06表示预设单个寄存器
+                    Send_ICmdByte5[2] = 0x00; //
+                    Send_ICmdByte5[3] = 0x04; //00 04表示设定电流
 
-                        Send_ICmdByte5[4] = (byte)(Idata / 256); //寄存器数值的高8位，取设定电压值X100后的高8位
-                        Send_ICmdByte5[5] = (byte)(Idata % 256); //寄存器数值的低8位，取设定电压值X100后的低8位
+                    Send_ICmdByte5[4] = (byte)(Idata / 256); //寄存器数值的高8位，取设定电压值X100后的高8位
+                    Send_ICmdByte5[5] = (byte)(Idata % 256); //寄存器数值的低8位，取设定电压值X100后的低8位
 
-                        CRCVal = CRC16(Send_ICmdByte5, 6); //CRC校验
-                        Send_ICmdByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
-                        Send_ICmdByte5[7] = (byte)(CRCVal / 256);
-                        break;
-                    }
+                    CRCVal = CRC16(Send_ICmdByte5, 6); //CRC校验
+                    Send_ICmdByte5[6] = (byte)(CRCVal % 256); //CRC校验码需交换高低字节
+                    Send_ICmdByte5[7] = (byte)(CRCVal / 256);
+                    break;
+                }
                 default:
                     break;
             }
@@ -2679,27 +2671,34 @@ namespace PowerSet.Main
             {
                 System.Windows.Forms.Application.DoEvents(); //可执行某无聊的操作
             }
-
         }
 
         ~PowerController()
         {
-            Thread1.Abort();
-            Thread2.Abort();
-            Thread3.Abort();
-            Thread4.Abort();
-        }
+			if (Thread1 != null && Thread1.IsAlive)
+				Thread1.Abort();
+			if (Thread2 != null && Thread2.IsAlive)
+				Thread2.Abort();
+			if (Thread3 != null && Thread3.IsAlive)
+				Thread3.Abort();
+			if (Thread4 != null && Thread4.IsAlive)
+				Thread4.Abort();
+		}
+
         /// <summary>
         /// 线程关闭函数
         /// </summary>
         public void CloseThread()
         {
-            Thread1.Abort();
-            Thread2.Abort();
-            Thread3.Abort();
-            Thread4.Abort();
+            if (Thread1 != null && Thread1.IsAlive)
+                Thread1.Abort();
+            if (Thread2 != null && Thread2.IsAlive)
+                Thread2.Abort();
+            if (Thread3 != null && Thread3.IsAlive)
+                Thread3.Abort();
+            if (Thread4 != null && Thread4.IsAlive)
+                Thread4.Abort();
         }
-
 
         /// <summary>
         /// 读电流
@@ -2722,6 +2721,7 @@ namespace PowerSet.Main
                     return 0;
             }
         }
+
         /// <summary>
         /// 设置电流
         /// </summary>
@@ -2774,6 +2774,7 @@ namespace PowerSet.Main
                     return 2;
             }
         }
+
         /// <summary>
         /// 关闭电源函数
         /// </summary>
