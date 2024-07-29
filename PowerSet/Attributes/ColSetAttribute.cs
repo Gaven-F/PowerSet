@@ -1,4 +1,5 @@
-﻿namespace PowerSet.Attribute
+﻿namespace PowerSet.Attributes
+
 {
     class ColSetAttribute : System.Attribute
     {

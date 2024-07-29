@@ -1,13 +1,12 @@
-﻿namespace PowerSet.Attribute
+﻿using PowerSet.Attributes;
+
+namespace PowerSet.Models
 {
     class ParamProcessSet : GF_SqlHelper.BaseClass.BaseTable
     {
         [ColSet("周期")]
         public int ProcessIndex { get; set; } = -1;
 
-        /// <summary>
-        /// 电流 Current
-        /// </summary>
         [ColSet("电流设置", DefaultVal = "1000")]
         public int I { get; set; } = -1;
         
