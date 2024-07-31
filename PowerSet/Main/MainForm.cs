@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using PowerSet.Attributes;
 using PowerSet.Utils;
+using SqlSugar;
 using C = PowerSet.Main.ConstData;
 
 namespace PowerSet.Main
@@ -24,9 +26,15 @@ namespace PowerSet.Main
         private readonly Dictionary<string, bool> ProcessStart = new Dictionary<string, bool>()
         {
             { C.K, false },
+#if DEBUG
+            { C.N, true },
+            { C.C, true },
+            { C.S, true },
+#else
             { C.N, false },
             { C.C, false },
-            { C.S, false }
+            { C.S, false },
+#endif
         };
 
         private readonly Dictionary<string, ParamSet> ParamSets =
@@ -50,11 +58,21 @@ namespace PowerSet.Main
 
         private readonly Dictionary<string, double> RealVals = new Dictionary<string, double>();
 
-        private long Cnt = 1;
+        /// <summary>
+        /// 项目实际运行时间
+        /// </summary>
+        private long RSecond = 1;
+
+        /// <summary>
+        /// 虚拟运行时间
+        /// </summary>
+        private long VSecond = 1;
 
         private readonly ObservableChanged<bool> Start = new ObservableChanged<bool>(false);
 
         private DateTime Time = DateTime.Now;
+
+        private Stopwatch Stopwatch = new Stopwatch();
         #endregion
 
         public MainForm()
@@ -99,7 +117,21 @@ namespace PowerSet.Main
         private void StartBtnClick(object sender, EventArgs e)
         {
             Start.Val = !Start.Val;
-            if(Start.Val) Time = DateTime.Now;
+            if (Start.Val)
+            {
+                Time = DateTime.Now;
+                Stopwatch.Reset();
+                Stopwatch.Start();
+                RSecond = 1;
+                VSecond = 0;
+            }
+            else
+            {
+                Stopwatch.Stop();
+                Console.WriteLine(
+                    $"（StopWatch）实际时间：{Stopwatch.Elapsed.TotalSeconds}\r\nTimer1秒计数：{RSecond}"
+                );
+            }
         }
 
         /// <summary>
@@ -111,7 +143,6 @@ namespace PowerSet.Main
         {
             if (sender is ObservableChanged<bool> s)
             {
-                Console.WriteLine(s.Val);
                 if (End_Btn.InvokeRequired)
                 {
                     End_Btn.BeginInvoke(new Action(() => End_Btn.Enabled = s.Val));
@@ -146,6 +177,26 @@ namespace PowerSet.Main
 
                     if (!Data.TryGetValue(p, out var data) && ProcessStart[p])
                         Data[p] = new List<RealIData>();
+
+                    if (!ProcessStart[p])
+                    {
+                        if (s.InvokeRequired)
+                        {
+                            s.BeginInvoke(
+                                new Action(() =>
+                                {
+                                    s.BackColor = System.Drawing.Color.LightGray;
+                                })
+                            );
+                        }
+                        else
+                        {
+                            s.BackColor = System.Drawing.Color.LightGray;
+                        }
+                    }
+
+                    var enableStart = ProcessStart.All(it => it.Value);
+                    Start_Btn.Enabled = enableStart;
                 });
             }
         }
@@ -156,10 +207,32 @@ namespace PowerSet.Main
         /// <param name="state">可传参</param>
         private void MainTimerAction(object state)
         {
+            if ((DateTime.Now - Time).TotalSeconds < VSecond)
+                return;
+
+            VSecond++;
+
+            Prefix.ForEach(p =>
+            {
+                if (Uis.TryGetValue(p + C.UI_I_LAB, out var label))
+                {
+                    if (ProcessStart[p])
+                    {
+                        label.BackColor =
+                            VSecond % 2 == 0
+                                ? System.Drawing.Color.LightGray
+                                : System.Drawing.Color.ForestGreen;
+                    }
+                    else
+                    {
+                        label.BackColor = System.Drawing.Color.LightGray;
+                    }
+                }
+            });
+
             if (!Start.Val)
                 return;
 
-            if ((DateTime.Now - Time).TotalSeconds < Cnt) return;
             // TODO: 实际取值逻辑
             GetRealData();
 
@@ -169,15 +242,14 @@ namespace PowerSet.Main
                 if (!Data.TryGetValue(p, out var data))
                     return;
 
-                data.Add(new RealIData() { XVal = Cnt, YVal = RealVals[p] });
+                data.Add(new RealIData() { XVal = RSecond, YVal = RealVals[p] });
             });
 
             Prefix.ForEach(p =>
             {
                 if (ProcessStart[p])
                 {
-                    var c = Uis[p + C.UI_I_VAL_LAB];
-                    if (c != null && c is Label)
+                    if (Uis.TryGetValue(p + C.UI_I_VAL_LAB, out var c) && c is Label)
                     {
                         if (c.InvokeRequired)
                         {
@@ -198,7 +270,7 @@ namespace PowerSet.Main
 
             AddDataToChart();
             Prefix.ForEach(p => { });
-            Cnt++;
+            RSecond++;
         }
 
         /// <summary>
@@ -207,7 +279,7 @@ namespace PowerSet.Main
         private void AddDataToChart()
         {
             ChartData.Rows.Add(
-                Cnt + "秒",
+                RSecond + "秒",
                 RealVals[C.K],
                 RealVals[C.N],
                 RealVals[C.C],
@@ -222,7 +294,6 @@ namespace PowerSet.Main
         {
 #if DEBUG
             Prefix.ForEach(p => RealVals[p] = R.NextDouble() * 4);
-
 #else
             Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000);
             PowerController.OpenI(C.K);

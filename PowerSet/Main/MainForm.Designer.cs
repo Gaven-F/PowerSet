@@ -29,7 +29,7 @@ namespace PowerSet.Main
         /// </summary>
         private void InitializeComponent()
         {
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.SplitLayout = new System.Windows.Forms.SplitContainer();
 			this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -333,6 +333,7 @@ namespace PowerSet.Main
 			// Start_Btn
 			// 
 			this.Start_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.Start_Btn.Enabled = false;
 			this.Start_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Start_Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
 			this.Start_Btn.Location = new System.Drawing.Point(1309, 4);
@@ -571,14 +572,14 @@ namespace PowerSet.Main
 			this.KParamSetTable.AllowUserToAddRows = false;
 			this.KParamSetTable.AllowUserToDeleteRows = false;
 			this.KParamSetTable.BackgroundColor = System.Drawing.Color.Gainsboro;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.KParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle1.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.KParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
 			this.KParamSetTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.tableLayoutPanel3.SetColumnSpan(this.KParamSetTable, 7);
 			this.KParamSetTable.Dock = System.Windows.Forms.DockStyle.Fill;
