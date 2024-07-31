@@ -219,10 +219,13 @@ namespace PowerSet.Main
                 {
                     if (Uis.TryGetValue(p + C.UI_I_VAL_LAB, out var c) && c is Label)
                     {
-                        UpdateControlProperty(c, new Action(() =>
-                        {
-                            c.Text = RealVals[p].ToString("0.00mA");
-                        }));
+                        UpdateControlProperty(
+                            c,
+                            new Action(() =>
+                            {
+                                c.Text = RealVals[p].ToString("0.00mA");
+                            })
+                        );
                     }
                 }
             });
@@ -372,7 +375,7 @@ namespace PowerSet.Main
             var t = typeof(ParamProcessSet);
             var ps = t.GetProperties();
 
-            #region 默认数据表列创建
+            #region Default Table Data Create
             for (int i = 0; i < 12; i++)
             {
                 baseDataTable.Rows.Add();
@@ -386,6 +389,7 @@ namespace PowerSet.Main
                 if (colset.Length > 0 && !HiddenTableCol.Contains(colset[0].Name))
                 {
                     baseDataTable.Columns.Add(colset[0].Name);
+
                     foreach (DataRow row in baseDataTable.Rows)
                     {
                         row[colset[0].Name] = colset[0].DefaultVal;
@@ -394,10 +398,11 @@ namespace PowerSet.Main
             }
 
             Prefix.ForEach(p => DataTables.Add(p, baseDataTable.Copy()));
-            #endregion
+			#endregion
 
 
-            Prefix.ForEach(p =>
+			#region Table Set Property & Add Data
+			Prefix.ForEach(p =>
             {
                 if (
                     Uis.TryGetValue(p + C.UI_PARAM_SET_TABLE, out var control)
@@ -406,11 +411,12 @@ namespace PowerSet.Main
                 {
                     table.DataSource = DataTables[table.Name.First().ToString()];
                     table.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-                    table.AllowUserToResizeRows = false;
 
                     foreach (DataGridViewTextBoxColumn col in table.Columns)
                     {
                         col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        col.SortMode = DataGridViewColumnSortMode.NotSortable;
+
                         if (ReadOnlyTableCol.Contains(col.Name, true))
                             col.ReadOnly = true;
                     }
@@ -421,6 +427,7 @@ namespace PowerSet.Main
                     }
                 }
             });
+            #endregion
         }
 
         /// <summary>
@@ -515,29 +522,43 @@ namespace PowerSet.Main
         };
 
         #endregion
-        private double GetTableDataVal(string flag, int rowIndex, string colName)
+        private string GetTableDataVal(string flag, int rowIndex, string colName)
         {
-            return Convert.ToDouble(DataTables[flag].Rows[rowIndex][colName]);
+            return Convert.ToString(DataTables[flag].Rows[rowIndex][colName]);
         }
 
-        private double GetTableDataVal(string flag, int rowIndex, int colIndex)
+        private string GetTableDataVal(string flag, int rowIndex, int colIndex)
         {
-            return Convert.ToDouble(DataTables[flag].Rows[rowIndex][colIndex]);
+            return Convert.ToString(DataTables[flag].Rows[rowIndex][colIndex]);
         }
-		#endregion
 
-		#region ControlUtils
-		void UpdateControlProperty(Control control, Action updateAction)
-		{
-			if (control.InvokeRequired)
-			{
-				control.BeginInvoke(new Action(() => updateAction()));
-			}
-			else
-			{
-				updateAction();
-			}
-		}
-		#endregion
-	}
+        /// <summary>
+        /// 获取周期
+        /// </summary>
+        /// <param name="flag"></param>
+        /// <param name="rowIndex"></param>
+        /// <returns></returns>
+        private int GetTableCycle(string flag, int rowIndex)
+        {
+            return Convert.ToInt32(
+                GetTableDataVal(flag, rowIndex, 0)
+                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1]
+            );
+        }
+        #endregion
+
+        #region ControlUtils
+        void UpdateControlProperty(Control control, Action updateAction)
+        {
+            if (control.InvokeRequired)
+            {
+                control.BeginInvoke(new Action(() => updateAction()));
+            }
+            else
+            {
+                updateAction();
+            }
+        }
+        #endregion
+    }
 }

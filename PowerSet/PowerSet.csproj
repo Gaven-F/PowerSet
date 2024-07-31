@@ -82,6 +82,7 @@
     </Compile>
     <Compile Include="Attributes\ColSetAttribute.cs" />
     <Compile Include="Main\ConstData.cs" />
+    <Compile Include="Main\Cycle.cs" />
     <Compile Include="Main\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

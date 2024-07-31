@@ -662,6 +662,7 @@ namespace PowerSet.Main
 			this.XAxisMax_Val.Size = new System.Drawing.Size(138, 29);
 			this.XAxisMax_Val.TabIndex = 5;
 			this.XAxisMax_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.XAxisMax_Val.Visible = false;
 			// 
 			// XAxisMax_Lab
 			// 
@@ -674,6 +675,7 @@ namespace PowerSet.Main
 			this.XAxisMax_Lab.TabIndex = 3;
 			this.XAxisMax_Lab.Text = "X轴最大值：";
 			this.XAxisMax_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.XAxisMax_Lab.Visible = false;
 			// 
 			// YAxisMax_Lab
 			// 
@@ -686,6 +688,7 @@ namespace PowerSet.Main
 			this.YAxisMax_Lab.TabIndex = 2;
 			this.YAxisMax_Lab.Text = "Y轴最大值：";
 			this.YAxisMax_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.YAxisMax_Lab.Visible = false;
 			// 
 			// YAxisMargin_Lab
 			// 
@@ -740,6 +743,7 @@ namespace PowerSet.Main
 			this.YAxisMax_Val.Size = new System.Drawing.Size(138, 29);
 			this.YAxisMax_Val.TabIndex = 6;
 			this.YAxisMax_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.YAxisMax_Val.Visible = false;
 			// 
 			// YAxisMargin_Val
 			// 
