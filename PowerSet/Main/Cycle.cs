@@ -1,37 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PowerSet.Main
 {
-    internal class CycleController
-    {
-        public List<Cycle> Cycles { get; set; }
-
-        public int StartCycle { get; set; }
-        public int EndCycle { get; set; }
-
-        public int CurrentCycle { get; set; }
-
-        public string ProcessFlag { get; set; }
-
-        public Cycle GetCuttentCycle()
-        {
-            return Cycles[CurrentCycle];
-        }
-
-        public bool TryEnterNextCycle()
-        {
-            if (GetCuttentCycle().IsFinish)
-            {
-                CurrentCycle++;
-                return true;
-            }
-            return false;
-        }
-    }
 
     internal class Cycle
     {
@@ -77,5 +52,10 @@ namespace PowerSet.Main
         }
 
         public double Value { get; set; }
+
+        public int GetCurrentCount()
+        {
+            return TotalTime / (WorkTime + SleepTime);
+        }
     }
 }
