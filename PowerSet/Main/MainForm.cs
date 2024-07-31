@@ -52,8 +52,6 @@ namespace PowerSet.Main
 
         private System.Threading.Timer MainTimer;
 
-        private readonly Random R = new Random();
-
         private readonly PowerController PowerController = new PowerController();
 
         private readonly Dictionary<string, double> RealVals = new Dictionary<string, double>();
@@ -266,7 +264,7 @@ namespace PowerSet.Main
                             c,
                             new Action(() =>
                             {
-                                c.Text = RealVals[p].ToString("0.00mA");
+                                c.Text = RealVals[p].ToString("0.00A");
                             })
                         );
                     }
@@ -510,8 +508,9 @@ namespace PowerSet.Main
                     })
                 );
             }
-        }
 
+			DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
+        }
 
         // TODO: 清除灰色
         // TODO: 设置可更改默认参数
@@ -626,44 +625,6 @@ namespace PowerSet.Main
                 }
             }
         }
-
-        #region TableDataUtils
-        #region Fileds
-        private readonly Dictionary<string, int> TableColMap = new Dictionary<string, int>
-        {
-            { "周期", 0 },
-            { "电流设置", 1 },
-            { "执行时间", 2 },
-            { "关闭时间", 3 },
-            { "设置次数", 4 },
-            { "执行次数", 5 },
-        };
-
-        #endregion
-        private string GetTableDataVal(string flag, int rowIndex, string colName)
-        {
-            return Convert.ToString(DataTables[flag].Rows[rowIndex][colName]);
-        }
-
-        private string GetTableDataVal(string flag, int rowIndex, int colIndex)
-        {
-            return Convert.ToString(DataTables[flag].Rows[rowIndex][colIndex]);
-        }
-
-        /// <summary>
-        /// 获取周期
-        /// </summary>
-        /// <param name="flag"></param>
-        /// <param name="rowIndex"></param>
-        /// <returns></returns>
-        private int GetTableCycle(string flag, int rowIndex)
-        {
-            return Convert.ToInt32(
-                GetTableDataVal(flag, rowIndex, 0)
-                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1]
-            );
-        }
-        #endregion
 
         #region ControlUtils
         void UpdateControlProperty(Control control, Action updateAction)

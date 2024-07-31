@@ -1,16 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Windows.Forms.DataVisualization.Charting;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PowerSet.Main
 {
@@ -2704,7 +2696,7 @@ namespace PowerSet.Main
         /// 读电流
         /// </summary>
         /// <param name="prefix">传送K、N、C、S</param>
-        /// <returns>返回K，N，C，S，实际读取值</returns>
+        /// <returns>返回K，N，C，S，实际读取值，0标红</returns>
         public double GetI(string prefix)
         {
             switch (prefix)
@@ -2734,6 +2726,7 @@ namespace PowerSet.Main
             {
                 case "K":
                     CurSetVal_K = (int)value;
+                    CurReadVal_K = (int)value;
                     return CurSetVal_K;
                 case "N":
                     CurSetVal_Na = (int)value;
@@ -2759,16 +2752,16 @@ namespace PowerSet.Main
             switch (prefix)
             {
                 case "K":
-                    NewOnFlag_K = true;
+                    KOnFlag = true;
                     return 1;
                 case "N":
-                    NewOnFlag_Na = true;
+                    NaOnFlag = true;
                     return 1;
                 case "C":
-                    NewOnFlag_Cs = true;
+                    CsOnFlag = true;
                     return 1;
                 case "S":
-                    NewOnFlag_Sb = true;
+                    SbOnFlag = true;
                     return 1;
                 default:
                     return 2;

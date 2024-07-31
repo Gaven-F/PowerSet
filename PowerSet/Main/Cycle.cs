@@ -21,6 +21,10 @@ namespace PowerSet.Main
         /// 需要执行的次数
         /// </summary>
         public int Count { get; set; }
+        public int CurrentCount
+        {
+            get => (TotalTime) / (WorkTime + SleepTime);
+        }
 
         /// <summary>
         /// 当前周期执行总时间
@@ -94,7 +98,7 @@ namespace PowerSet.Main
                         {
                             TotalTime = TotalTime,
                             Flag = ProcessFlag,
-                            Count = Count,
+                            CurrentCount = CurrentCount,
                             Value = Value,
                             Index = Index,
                             IsFinish = IsFinish,
@@ -109,7 +113,7 @@ namespace PowerSet.Main
                     {
                         TotalTime = TotalTime,
                         Flag = ProcessFlag,
-                        Count = Count,
+                        CurrentCount = CurrentCount,
                         Value = Value,
                         Index = Index,
                         IsFinish = IsFinish,
@@ -136,7 +140,7 @@ namespace PowerSet.Main
         /// <summary>
         /// 周期执行次数
         /// </summary>
-        public int Count { get; set; }
+        public int CurrentCount { get; set; }
 
         /// <summary>
         /// 执行总时间
