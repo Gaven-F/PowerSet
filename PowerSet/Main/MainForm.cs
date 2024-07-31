@@ -4,11 +4,13 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using PowerSet.Attributes;
 using PowerSet.Utils;
 using SqlSugar;
+using SqlSugar.Extensions;
 using C = PowerSet.Main.ConstData;
 
 namespace PowerSet.Main
@@ -122,10 +124,9 @@ namespace PowerSet.Main
                 //Stopwatch.Start();
                 RSecond = 1;
                 VSecond = 0;
-                ChartData.Clear();
                 ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
 
-                Data.Clear();
+                ChartData.Clear();
                 CycleControllers.Clear();
 
                 Prefix.ForEach(p =>
@@ -173,15 +174,24 @@ namespace PowerSet.Main
         /// </remarks>
         private void LabClick(object sender, EventArgs e)
         {
-            // TODO: 打开电源并发送0及关闭电源
-
             if (sender is Label s && s.Name.Contains(C.UI_I_LAB))
             {
                 Prefix.ForEach(p =>
                 {
                     if (!s.Name.StartsWith(p))
                         return;
+
                     ProcessStart[p] = !ProcessStart[p];
+
+                    if (ProcessStart[p])
+                    {
+                        PowerController.OpenI(p);
+                        PowerController.SetI(p, 0);
+                    }
+                    else
+                    {
+                        PowerController.CloseI(p);
+                    }
 
                     if (!Data.TryGetValue(p, out var data) && ProcessStart[p])
                         Data[p] = new List<RealIData>();
@@ -222,7 +232,6 @@ namespace PowerSet.Main
             if (!Start.Val)
                 return;
 
-            // TODO: 实际取值逻辑
             GetRealData();
 
             // TODO: 缓存所有实时数据到内存中
@@ -232,6 +241,7 @@ namespace PowerSet.Main
                     return;
 
                 data.Add(new RealIData() { XVal = RSecond, YVal = RealVals[p] });
+                Debug.WriteLine(RealVals[p]);
             });
 
             Prefix.ForEach(p =>
@@ -278,13 +288,13 @@ namespace PowerSet.Main
 #if DEBUG
             Prefix.ForEach(p => RealVals[p] = R.NextDouble() * 4);
 #else
-            Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000);
-            PowerController.OpenI(C.K);
-            PowerController.OpenI(C.N);
-            PowerController.OpenI(C.C);
-            PowerController.OpenI(C.S);
-            PowerController.SetI("K", 0);
-            PowerController.SetI("N", 0);
+            Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000.0);
+            //PowerController.OpenI(C.K);
+            //PowerController.OpenI(C.N);
+            //PowerController.OpenI(C.C);
+            //PowerController.OpenI(C.S);
+            //PowerController.SetI("K", 0);
+            //PowerController.SetI("N", 0);
 #endif
         }
 
@@ -434,6 +444,8 @@ namespace PowerSet.Main
                     && control is DataGridView table
                 )
                 {
+                    table.EditingControlShowing += ParamSetTable_EditingControlShowing;
+
                     table.DataSource = DataTables[table.Name.First().ToString()];
                     table.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
 
@@ -490,6 +502,11 @@ namespace PowerSet.Main
 
         private void CloseSysEvent(object sender, EventArgs e)
         {
+            Prefix.ForEach(p =>
+            {
+                PowerController.CloseI(p);
+                Task.Delay(100).Wait();
+            });
             PowerController.CloseThread();
             MainTimer.Dispose();
             Close();
@@ -596,5 +613,29 @@ namespace PowerSet.Main
             }
         }
         #endregion
+
+
+        private void ParamSetTable_EditingControlShowing(
+            object sender,
+            DataGridViewEditingControlShowingEventArgs e
+        )
+        {
+            var table = (DataGridView)sender;
+            var numColNum = new int[] { 1, 2, 3, 4, };
+            if (numColNum.Contains(table.CurrentCell.ColumnIndex))
+            {
+                e.Control.KeyPress -= TextBox_KeyPress;
+                e.Control.KeyPress += TextBox_KeyPress;
+            }
+        }
+
+        private void TextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // 检查输入是否为数字或控制字符（如退格）
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
     }
 }
