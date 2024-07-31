@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity.ModelConfiguration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace PowerSet.Main
 {
@@ -23,7 +25,7 @@ namespace PowerSet.Main
         /// <summary>
         /// 当前周期执行总时间
         /// </summary>
-        public int TotalTime { get; set; } = 1;
+        public int TotalTime { get; set; } = 0;
 
         /// <summary>
         /// 周期需要的工作时间
@@ -45,12 +47,15 @@ namespace PowerSet.Main
 
         public CycleController Controller { get; set; }
 
+        private bool _isFinish = false;
+
         /// <summary>
         /// 周期是否完成
         /// </summary>
         public bool IsFinish
         {
-            get => TotalTime >= (WorkTime + SleepTime) * Count;
+            get => TotalTime > (WorkTime + SleepTime) * Count | _isFinish;
+            set { _isFinish = value; }
         }
 
         private double _value = 0;
@@ -82,20 +87,23 @@ namespace PowerSet.Main
                         Task.Delay(10).Wait();
                         continue;
                     }
-                    Execute?.BeginInvoke(
+
+                    Debug.WriteLine($"{Index}{ProcessFlag}: {TotalTime} {IsFinish}");
+                    Execute?.Invoke(
                         new CycleExecuteArg()
                         {
                             TotalTime = TotalTime,
                             Flag = ProcessFlag,
                             Count = Count,
                             Value = Value,
-                        },
-                        null,
-                        null
+                            Index = Index,
+                            IsFinish = IsFinish,
+                        }
                     );
 
                     TotalTime++;
                 }
+
                 Executed?.Invoke(
                     new CycleExecuteArg()
                     {
@@ -103,6 +111,8 @@ namespace PowerSet.Main
                         Flag = ProcessFlag,
                         Count = Count,
                         Value = Value,
+                        Index = Index,
+                        IsFinish = IsFinish,
                     }
                 );
 
@@ -137,5 +147,7 @@ namespace PowerSet.Main
         /// 周期
         /// </summary>
         public int Index { get; set; }
+
+        public bool IsFinish { get; set; }
     }
 }

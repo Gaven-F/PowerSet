@@ -2675,15 +2675,15 @@ namespace PowerSet.Main
 
         ~PowerController()
         {
-			if (Thread1 != null && Thread1.IsAlive)
-				Thread1.Abort();
-			if (Thread2 != null && Thread2.IsAlive)
-				Thread2.Abort();
-			if (Thread3 != null && Thread3.IsAlive)
-				Thread3.Abort();
-			if (Thread4 != null && Thread4.IsAlive)
-				Thread4.Abort();
-		}
+            if (Thread1 != null && Thread1.IsAlive)
+                Thread1.Abort();
+            if (Thread2 != null && Thread2.IsAlive)
+                Thread2.Abort();
+            if (Thread3 != null && Thread3.IsAlive)
+                Thread3.Abort();
+            if (Thread4 != null && Thread4.IsAlive)
+                Thread4.Abort();
+        }
 
         /// <summary>
         /// 线程关闭函数

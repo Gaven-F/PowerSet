@@ -61,12 +61,12 @@ namespace PowerSet.Main
         /// <summary>
         /// 项目实际运行时间
         /// </summary>
-        private long RSecond = 1;
+        private long RSecond = -1;
 
         /// <summary>
         /// 虚拟运行时间
         /// </summary>
-        private long VSecond = 1;
+        private long VSecond = 0;
 
         private readonly ObservableChanged<bool> Start = new ObservableChanged<bool>(false);
 
@@ -127,15 +127,22 @@ namespace PowerSet.Main
             {
                 ChartData.Clear();
                 Chart.DataBind();
+                if (CycleControllers.Count > 0)
+                {
+                    foreach (var item in CycleControllers)
+                    {
+                        item.Value.FinishAll();
+                    }
+                }
                 CycleControllers.Clear();
                 Time = DateTime.Now;
-                RSecond = 1;
-                VSecond = 1;
-                ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
-
+                RSecond = -1;
+                VSecond = 0;
 
                 Prefix.ForEach(p =>
                 {
+                    if (!ProcessStart[p])
+                        return;
                     CycleControllers.Add(p, new CycleController(DataTables[p], p));
 
                     var cycles = CycleControllers[p].Cycles;
@@ -295,7 +302,7 @@ namespace PowerSet.Main
                 var val = .0;
                 if (ProcessStart[p])
 #if DEBUG
-                    val = R.NextDouble() * 4;
+                    val = PowerController.GetI(p) / 1000.0;
 #else
                     val = PowerController.GetI(p) / 1000.0;
 #endif
@@ -333,7 +340,7 @@ namespace PowerSet.Main
                 Chart.Series.Add(
                     new Series(p)
                     {
-                        ChartType = SeriesChartType.Line,
+                        ChartType = SeriesChartType.StepLine,
                         Legend = C.BASE_LEGEND,
                         XValueMember = "X",
                         YValueMembers = p + "Y",
@@ -350,13 +357,12 @@ namespace PowerSet.Main
 
             chartArea.AxisY.Interval = Convert.ToDouble(YAxisMargin_Val.Value);
 
-            chartArea.AxisX.Minimum = 1;
+            chartArea.AxisX.Minimum = 2;
 
             chartArea.AxisX.Maximum = 60;
             chartArea.AxisY.Maximum = 5;
 
             chartArea.AxisY.LabelStyle.Format = "0.0A";
-            chartArea.AxisX.LabelStyle.Format = "0S";
 
             #endregion
 
@@ -367,7 +373,7 @@ namespace PowerSet.Main
                 ChartData.Columns.Add($"{p}Y");
             });
             ChartData.RowChanged += DataChanged;
-            ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
+            //ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
             //ChartData.Rows.Add("1秒", 0.0, 0.0, 0.0, 0.0);
             //ChartData.Rows.Add("2秒", 0.0, 0.0, 0.0, 0.0);
             //ChartData.Rows.Add("3秒", 0.0, 0.0, 0.0, 0.0);
@@ -485,11 +491,49 @@ namespace PowerSet.Main
         {
             PowerController.SetI(arg.Flag, arg.Value);
             // TODO: 表格颜色闪烁
+
+            if (
+                Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
+                && c is DataGridView table
+                && ProcessStart[arg.Flag]
+            )
+            {
+                UpdateControlProperty(
+                    table,
+                    new Action(() =>
+                    {
+                        table.Rows[arg.Index].DefaultCellStyle.BackColor = arg.IsFinish
+                            ? System.Drawing.Color.LightGray
+                            : arg.TotalTime % 2 == 0
+                                ? System.Drawing.Color.LightBlue
+                                : System.Drawing.Color.LightGreen;
+                    })
+                );
+            }
         }
 
+
+        // TODO: 清除灰色
+        // TODO: 设置可更改默认参数
+        // TODO: 暂停后才可结束
         private void Cycle_Executed(CycleExecuteArg arg)
         {
-            // TODO: 表格颜色变灰
+            if (
+                Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
+                && c is DataGridView table
+            )
+            {
+                UpdateControlProperty(
+                    table,
+                    new Action(() =>
+                    {
+                        table.Rows[arg.Index].DefaultCellStyle.BackColor = System
+                            .Drawing
+                            .Color
+                            .Gray;
+                    })
+                );
+            }
         }
 
         /// <summary>
@@ -529,7 +573,6 @@ namespace PowerSet.Main
         private void HiddenChartClick(object sender, EventArgs e) =>
             SplitLayout.Panel1Collapsed = !SplitLayout.Panel1Collapsed;
 
-        // TODO: 统一管理
         private void AddProcessBtn_Click(object sender, EventArgs e)
         {
             var btn = (Button)sender;
