@@ -17,6 +17,7 @@ namespace PowerSet.Main
     {
         #region Fileds
         private readonly List<string> ReadOnlyTableCol = new List<string> { "周期", "执行次数", "实际电流" };
+        private readonly List<string> HiddenTableCol = new List<string> { "实际电流" };
 
         private readonly List<string> Prefix = new List<string> { C.K, C.N, C.C, C.S };
 
@@ -26,15 +27,9 @@ namespace PowerSet.Main
         private readonly Dictionary<string, bool> ProcessStart = new Dictionary<string, bool>()
         {
             { C.K, false },
-#if DEBUG
-            { C.N, true },
-            { C.C, true },
-            { C.S, true },
-#else
             { C.N, false },
             { C.C, false },
             { C.S, false },
-#endif
         };
 
         private readonly Dictionary<string, ParamSet> ParamSets =
@@ -72,7 +67,7 @@ namespace PowerSet.Main
 
         private DateTime Time = DateTime.Now;
 
-        private Stopwatch Stopwatch = new Stopwatch();
+        readonly Stopwatch Stopwatch = new Stopwatch();
         #endregion
 
         public MainForm()
@@ -124,13 +119,13 @@ namespace PowerSet.Main
                 Stopwatch.Start();
                 RSecond = 1;
                 VSecond = 0;
+                ChartData.Clear();
+                ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
+                Data.Clear();
             }
             else
             {
                 Stopwatch.Stop();
-                Console.WriteLine(
-                    $"（StopWatch）实际时间：{Stopwatch.Elapsed.TotalSeconds}\r\nTimer1秒计数：{RSecond}"
-                );
             }
         }
 
@@ -143,18 +138,9 @@ namespace PowerSet.Main
         {
             if (sender is ObservableChanged<bool> s)
             {
-                if (End_Btn.InvokeRequired)
-                {
-                    End_Btn.BeginInvoke(new Action(() => End_Btn.Enabled = s.Val));
-                    Saven_Btn.BeginInvoke(new Action(() => Saven_Btn.Enabled = !s.Val));
-                    Start_Btn.BeginInvoke(new Action(() => Start_Btn.Enabled = !s.Val));
-                }
-                else
-                {
-                    End_Btn.Enabled = s.Val;
-                    Saven_Btn.Enabled = !s.Val;
-                    Start_Btn.Enabled = !s.Val;
-                }
+                UpdateControlProperty(End_Btn, new Action(() => End_Btn.Enabled = s.Val));
+                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = s.Val));
+                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = s.Val));
             }
         }
 
@@ -172,31 +158,31 @@ namespace PowerSet.Main
             {
                 Prefix.ForEach(p =>
                 {
-                    if (s.Name.StartsWith(p))
-                        ProcessStart[p] = !ProcessStart[p];
+                    if (!s.Name.StartsWith(p))
+                        return;
+                    ProcessStart[p] = !ProcessStart[p];
 
                     if (!Data.TryGetValue(p, out var data) && ProcessStart[p])
                         Data[p] = new List<RealIData>();
 
-                    if (!ProcessStart[p])
-                    {
-                        if (s.InvokeRequired)
+                    UpdateControlProperty(
+                        s,
+                        new Action(() =>
                         {
-                            s.BeginInvoke(
-                                new Action(() =>
-                                {
-                                    s.BackColor = System.Drawing.Color.LightGray;
-                                })
-                            );
-                        }
-                        else
-                        {
-                            s.BackColor = System.Drawing.Color.LightGray;
-                        }
-                    }
+                            s.BackColor = ProcessStart[p]
+                                ? System.Drawing.Color.ForestGreen
+                                : System.Drawing.Color.LightGray;
+                        })
+                    );
 
-                    var enableStart = ProcessStart.All(it => it.Value);
-                    Start_Btn.Enabled = enableStart;
+                    UpdateControlProperty(
+                        Start_Btn,
+                        new Action(
+                            () => Start_Btn.Enabled = ProcessStart.Any(it => it.Value) && Start.Val
+                        )
+                    );
+
+                    Debug.WriteLine("Click");
                 });
             }
         }
@@ -211,24 +197,6 @@ namespace PowerSet.Main
                 return;
 
             VSecond++;
-
-            Prefix.ForEach(p =>
-            {
-                if (Uis.TryGetValue(p + C.UI_I_LAB, out var label))
-                {
-                    if (ProcessStart[p])
-                    {
-                        label.BackColor =
-                            VSecond % 2 == 0
-                                ? System.Drawing.Color.LightGray
-                                : System.Drawing.Color.ForestGreen;
-                    }
-                    else
-                    {
-                        label.BackColor = System.Drawing.Color.LightGray;
-                    }
-                }
-            });
 
             if (!Start.Val)
                 return;
@@ -251,19 +219,10 @@ namespace PowerSet.Main
                 {
                     if (Uis.TryGetValue(p + C.UI_I_VAL_LAB, out var c) && c is Label)
                     {
-                        if (c.InvokeRequired)
-                        {
-                            c.BeginInvoke(
-                                new Action(() =>
-                                {
-                                    c.Text = RealVals[p].ToString("0.00mA");
-                                })
-                            );
-                        }
-                        else
+                        UpdateControlProperty(c, new Action(() =>
                         {
                             c.Text = RealVals[p].ToString("0.00mA");
-                        }
+                        }));
                     }
                 }
             });
@@ -337,10 +296,14 @@ namespace PowerSet.Main
             Chart.Legends.Add(new Legend(C.BASE_LEGEND));
             Chart.ChartAreas.Add(chartArea);
             chartArea.AxisX.Interval = Convert.ToDouble(XAxisMargin_Val.Value);
-            chartArea.AxisX.MajorGrid.Interval = Convert.ToDouble(XAxisMargin_Val.Value);
+            chartArea.AxisX.MajorGrid.Interval = 1;
+            chartArea.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
             chartArea.AxisY.Interval = Convert.ToDouble(YAxisMargin_Val.Value);
 
             chartArea.AxisX.Minimum = 1;
+
+            chartArea.AxisX.Maximum = 60;
+            chartArea.AxisY.Maximum = 5;
 
             chartArea.AxisY.LabelStyle.Format = "0.0A";
 
@@ -352,8 +315,16 @@ namespace PowerSet.Main
             {
                 ChartData.Columns.Add($"{p}Y");
             });
-            ChartData.Rows.Add("0秒", 0, 0, 0, 0);
             ChartData.RowChanged += DataChanged;
+            ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
+            ChartData.Rows.Add("1秒", 0.0, 0.0, 0.0, 0.0);
+            ChartData.Rows.Add("2秒", 0.0, 0.0, 0.0, 0.0);
+            ChartData.Rows.Add("3秒", 0.0, 0.0, 0.0, 0.0);
+            ChartData.Rows.Add("4秒", 0.0, 0.0, 0.0, 0.0);
+            ChartData.Rows.Add("5秒", 0.0, 0.0, 0.0, 0.0);
+
+            Chart.DataSource = ChartData;
+            Chart.DataBind();
             #endregion
         }
 
@@ -364,21 +335,30 @@ namespace PowerSet.Main
         /// <param name="e"></param>
         private void DataChanged(object sender, DataRowChangeEventArgs e)
         {
-            if (Chart.InvokeRequired)
+            var x = Math.Max(
+                Chart.ChartAreas[C.CHART_BASE_CHARTAREA].AxisX.Maximum,
+                ChartData.Rows.Count + 5
+            );
+            var maxVal = 0.0;
+            foreach (DataRow row in ChartData.Rows)
             {
-                Chart.BeginInvoke(
-                    new Action(() =>
-                    {
-                        Chart.DataSource = ChartData;
-                        Chart.DataBind();
-                    })
-                );
+                Prefix.ForEach(p =>
+                {
+                    maxVal = Math.Max(Convert.ToDouble(row[p + "Y"]), maxVal);
+                });
             }
-            else
-            {
-                Chart.DataSource = ChartData;
-                Chart.DataBind();
-            }
+            var y = Math.Max(Chart.ChartAreas[C.CHART_BASE_CHARTAREA].AxisY.Maximum, maxVal + .5);
+
+            UpdateControlProperty(
+                Chart,
+                new Action(() =>
+                {
+                    //Chart.DataSource = ChartData;
+                    Chart.DataBind();
+                    Chart.ChartAreas[C.CHART_BASE_CHARTAREA].AxisX.Maximum = x;
+                    Chart.ChartAreas[C.CHART_BASE_CHARTAREA].AxisY.Maximum = y;
+                })
+            );
         }
 
         /// <summary>
@@ -403,7 +383,7 @@ namespace PowerSet.Main
                 var colset =
                     property.GetCustomAttributes(typeof(ColSetAttribute), false)
                     as ColSetAttribute[];
-                if (colset.Length > 0)
+                if (colset.Length > 0 && !HiddenTableCol.Contains(colset[0].Name))
                 {
                     baseDataTable.Columns.Add(colset[0].Name);
                     foreach (DataRow row in baseDataTable.Rows)
@@ -413,36 +393,32 @@ namespace PowerSet.Main
                 }
             }
 
-            Prefix.ForEach(f => DataTables.Add(f, baseDataTable.Copy()));
+            Prefix.ForEach(p => DataTables.Add(p, baseDataTable.Copy()));
             #endregion
 
 
-            var allParamSetTableName = Prefix.Select(it => it + C.UI_PARAM_SET_TABLE).ToList();
-            var allParamSetTable = allParamSetTableName
-                .Select(name =>
-                    Uis.TryGetValue(name, out var table) && table is DataGridView
-                        ? table as DataGridView
-                        : null
-                )
-                .ToList();
-
-            allParamSetTable.ForEach(table =>
+            Prefix.ForEach(p =>
             {
-                if (table == null)
-                    return;
-                table.DataSource = DataTables[table.Name.First().ToString()];
-                table.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-                table.AllowUserToResizeRows = false;
-                foreach (DataGridViewTextBoxColumn col in table.Columns)
+                if (
+                    Uis.TryGetValue(p + C.UI_PARAM_SET_TABLE, out var control)
+                    && control is DataGridView table
+                )
                 {
-                    col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                    if (ReadOnlyTableCol.Contains(col.Name, true))
-                        col.ReadOnly = true;
-                }
+                    table.DataSource = DataTables[table.Name.First().ToString()];
+                    table.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                    table.AllowUserToResizeRows = false;
 
-                for (int i = 0; i < table.RowCount; i++)
-                {
-                    KParamSetTable.Rows[i].Cells["周期"].Value = $"周期{i + 1: 000}";
+                    foreach (DataGridViewTextBoxColumn col in table.Columns)
+                    {
+                        col.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                        if (ReadOnlyTableCol.Contains(col.Name, true))
+                            col.ReadOnly = true;
+                    }
+
+                    for (int i = 0; i < table.RowCount; i++)
+                    {
+                        table.Rows[i].Cells["周期"].Value = $"周期{i + 1: 000}";
+                    }
                 }
             });
         }
@@ -525,5 +501,43 @@ namespace PowerSet.Main
                 }
             }
         }
-    }
+
+        #region TableDataUtils
+        #region Fileds
+        private readonly Dictionary<string, int> TableColMap = new Dictionary<string, int>
+        {
+            { "周期", 0 },
+            { "电流设置", 1 },
+            { "执行时间", 2 },
+            { "关闭时间", 3 },
+            { "设置次数", 4 },
+            { "执行次数", 5 },
+        };
+
+        #endregion
+        private double GetTableDataVal(string flag, int rowIndex, string colName)
+        {
+            return Convert.ToDouble(DataTables[flag].Rows[rowIndex][colName]);
+        }
+
+        private double GetTableDataVal(string flag, int rowIndex, int colIndex)
+        {
+            return Convert.ToDouble(DataTables[flag].Rows[rowIndex][colIndex]);
+        }
+		#endregion
+
+		#region ControlUtils
+		void UpdateControlProperty(Control control, Action updateAction)
+		{
+			if (control.InvokeRequired)
+			{
+				control.BeginInvoke(new Action(() => updateAction()));
+			}
+			else
+			{
+				updateAction();
+			}
+		}
+		#endregion
+	}
 }
