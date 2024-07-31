@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Entity.ModelConfiguration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace PowerSet.Main
 {
-
     internal class Cycle
     {
         /// <summary>
@@ -23,7 +23,7 @@ namespace PowerSet.Main
         /// <summary>
         /// 当前周期执行总时间
         /// </summary>
-        public int TotalTime { get; set; }
+        public int TotalTime { get; set; } = 1;
 
         /// <summary>
         /// 周期需要的工作时间
@@ -43,6 +43,8 @@ namespace PowerSet.Main
             get => TotalTime % (WorkTime + SleepTime) - WorkTime < 0;
         }
 
+        public CycleController Controller { get; set; }
+
         /// <summary>
         /// 周期是否完成
         /// </summary>
@@ -51,11 +53,89 @@ namespace PowerSet.Main
             get => TotalTime >= (WorkTime + SleepTime) * Count;
         }
 
-        public double Value { get; set; }
+        private double _value = 0;
+        public double Value
+        {
+            get => IsWork ? _value : 0;
+            set { _value = value; }
+        }
+
+        public string ProcessFlag { get; set; }
 
         public int GetCurrentCount()
         {
             return TotalTime / (WorkTime + SleepTime);
         }
+
+        public event Action<CycleExecuteArg> Execute;
+        public event Action<CycleExecuteArg> Executed;
+
+        public void Start()
+        {
+            var startTime = DateTime.Now;
+            Task.Run(() =>
+            {
+                while (!IsFinish)
+                {
+                    if ((DateTime.Now - startTime).TotalSeconds < TotalTime)
+                    {
+                        Task.Delay(10).Wait();
+                        continue;
+                    }
+                    Execute?.BeginInvoke(
+                        new CycleExecuteArg()
+                        {
+                            TotalTime = TotalTime,
+                            Flag = ProcessFlag,
+                            Count = Count,
+                            Value = Value,
+                        },
+                        null,
+                        null
+                    );
+
+                    TotalTime++;
+                }
+                Executed?.Invoke(
+                    new CycleExecuteArg()
+                    {
+                        TotalTime = TotalTime,
+                        Flag = ProcessFlag,
+                        Count = Count,
+                        Value = Value,
+                    }
+                );
+
+                if (!Controller.IsFinish)
+                {
+                    Controller.TryEnterNextCycle();
+                }
+                else
+                {
+                    Controller.Finish();
+                }
+            });
+        }
+    }
+
+    internal class CycleExecuteArg
+    {
+        public double Value { get; set; }
+        public string Flag { get; set; }
+
+        /// <summary>
+        /// 周期执行次数
+        /// </summary>
+        public int Count { get; set; }
+
+        /// <summary>
+        /// 执行总时间
+        /// </summary>
+        public int TotalTime { get; set; }
+
+        /// <summary>
+        /// 周期
+        /// </summary>
+        public int Index { get; set; }
     }
 }

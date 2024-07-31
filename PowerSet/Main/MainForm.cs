@@ -32,6 +32,9 @@ namespace PowerSet.Main
             { C.S, false },
         };
 
+        private readonly Dictionary<string, CycleController> CycleControllers =
+            new Dictionary<string, CycleController>();
+
         private readonly Dictionary<string, ParamSet> ParamSets =
             new Dictionary<string, ParamSet>();
 
@@ -74,7 +77,7 @@ namespace PowerSet.Main
         {
             InitializeComponent();
             InitUIMap();
-            InitTableData();
+            InitCycleTableData();
             InitChart();
             EventBind();
             StartProcess();
@@ -99,8 +102,8 @@ namespace PowerSet.Main
 
             Start.PropertyChanged += StartChanged;
 
-            Start_Btn.Click += StartBtnClick;
-            End_Btn.Click += StartBtnClick;
+            Start_Btn.Click += StartBtn_Click;
+            End_Btn.Click += StartBtn_Click;
 
             Prefix.ForEach(p =>
             {
@@ -109,19 +112,35 @@ namespace PowerSet.Main
             });
         }
 
-        private void StartBtnClick(object sender, EventArgs e)
+        private void StartBtn_Click(object sender, EventArgs e)
         {
             Start.Val = !Start.Val;
             if (Start.Val)
             {
                 Time = DateTime.Now;
-                Stopwatch.Reset();
-                Stopwatch.Start();
+                //Stopwatch.Reset();
+                //Stopwatch.Start();
                 RSecond = 1;
                 VSecond = 0;
                 ChartData.Clear();
                 ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
+
                 Data.Clear();
+                CycleControllers.Clear();
+
+                Prefix.ForEach(p =>
+                {
+                    CycleControllers.Add(p, new CycleController(DataTables[p], p));
+
+                    var cycles = CycleControllers[p].Cycles;
+                    cycles.ForEach(c =>
+                    {
+                        c.Execute += Cycle_Execute;
+                        c.Executed += Cycle_Executed;
+                    });
+
+                    CycleControllers[p].Start();
+                });
             }
             else
             {
@@ -139,8 +158,8 @@ namespace PowerSet.Main
             if (sender is ObservableChanged<bool> s)
             {
                 UpdateControlProperty(End_Btn, new Action(() => End_Btn.Enabled = s.Val));
-                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = s.Val));
-                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = s.Val));
+                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = !s.Val));
+                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = !s.Val));
             }
         }
 
@@ -154,6 +173,8 @@ namespace PowerSet.Main
         /// </remarks>
         private void LabClick(object sender, EventArgs e)
         {
+            // TODO: 打开电源并发送0及关闭电源
+
             if (sender is Label s && s.Name.Contains(C.UI_I_LAB))
             {
                 Prefix.ForEach(p =>
@@ -178,7 +199,7 @@ namespace PowerSet.Main
                     UpdateControlProperty(
                         Start_Btn,
                         new Action(
-                            () => Start_Btn.Enabled = ProcessStart.Any(it => it.Value) && Start.Val
+                            () => Start_Btn.Enabled = ProcessStart.Any(it => it.Value) && !Start.Val
                         )
                     );
 
@@ -299,8 +320,10 @@ namespace PowerSet.Main
             Chart.Legends.Add(new Legend(C.BASE_LEGEND));
             Chart.ChartAreas.Add(chartArea);
             chartArea.AxisX.Interval = Convert.ToDouble(XAxisMargin_Val.Value);
+
             chartArea.AxisX.MajorGrid.Interval = 1;
             chartArea.AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+
             chartArea.AxisY.Interval = Convert.ToDouble(YAxisMargin_Val.Value);
 
             chartArea.AxisX.Minimum = 1;
@@ -309,6 +332,7 @@ namespace PowerSet.Main
             chartArea.AxisY.Maximum = 5;
 
             chartArea.AxisY.LabelStyle.Format = "0.0A";
+            chartArea.AxisX.LabelStyle.Format = "0S";
 
             #endregion
 
@@ -320,11 +344,11 @@ namespace PowerSet.Main
             });
             ChartData.RowChanged += DataChanged;
             ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
-            ChartData.Rows.Add("1秒", 0.0, 0.0, 0.0, 0.0);
-            ChartData.Rows.Add("2秒", 0.0, 0.0, 0.0, 0.0);
-            ChartData.Rows.Add("3秒", 0.0, 0.0, 0.0, 0.0);
-            ChartData.Rows.Add("4秒", 0.0, 0.0, 0.0, 0.0);
-            ChartData.Rows.Add("5秒", 0.0, 0.0, 0.0, 0.0);
+            //ChartData.Rows.Add("1秒", 0.0, 0.0, 0.0, 0.0);
+            //ChartData.Rows.Add("2秒", 0.0, 0.0, 0.0, 0.0);
+            //ChartData.Rows.Add("3秒", 0.0, 0.0, 0.0, 0.0);
+            //ChartData.Rows.Add("4秒", 0.0, 0.0, 0.0, 0.0);
+            //ChartData.Rows.Add("5秒", 0.0, 0.0, 0.0, 0.0);
 
             Chart.DataSource = ChartData;
             Chart.DataBind();
@@ -367,7 +391,7 @@ namespace PowerSet.Main
         /// <summary>
         /// 初始化数据表
         /// </summary>
-        private void InitTableData()
+        private void InitCycleTableData()
         {
             Prefix.ForEach(f => ParamSets.Add(f, new ParamSet()));
 
@@ -397,13 +421,14 @@ namespace PowerSet.Main
                 }
             }
 
-            Prefix.ForEach(p => DataTables.Add(p, baseDataTable.Copy()));
-			#endregion
+            #endregion
 
 
-			#region Table Set Property & Add Data
-			Prefix.ForEach(p =>
+            #region Table Set Property & Add Data
+            Prefix.ForEach(p =>
             {
+                DataTables.Add(p, baseDataTable.Copy());
+
                 if (
                     Uis.TryGetValue(p + C.UI_PARAM_SET_TABLE, out var control)
                     && control is DataGridView table
@@ -428,6 +453,17 @@ namespace PowerSet.Main
                 }
             });
             #endregion
+        }
+
+        private void Cycle_Execute(CycleExecuteArg arg)
+        {
+            PowerController.SetI(arg.Flag, arg.Value);
+            // TODO: 表格颜色闪烁
+        }
+
+        private void Cycle_Executed(CycleExecuteArg arg)
+        {
+            // TODO: 表格颜色变灰
         }
 
         /// <summary>
