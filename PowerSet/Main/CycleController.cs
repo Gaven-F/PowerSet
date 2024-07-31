@@ -49,7 +49,7 @@ namespace PowerSet.Main
         private bool _isFinish = false;
         public bool IsFinish
         {
-            get => CurrentCycle + 1 >= EndCycle | false;
+            get => CurrentCycle + 1 > EndCycle | false;
             set { _isFinish = value; }
         }
 

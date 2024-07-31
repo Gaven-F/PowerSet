@@ -29,11 +29,11 @@ namespace PowerSet.Main
 		/// </summary>
 		private void InitializeComponent()
 		{
-			System.Windows.Forms.DataVisualization.Charting.Title title1 = new System.Windows.Forms.DataVisualization.Charting.Title();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataVisualization.Charting.Title title2 = new System.Windows.Forms.DataVisualization.Charting.Title();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.SplitLayout = new System.Windows.Forms.SplitContainer();
 			this.Chart = new System.Windows.Forms.DataVisualization.Charting.Chart();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
@@ -62,24 +62,21 @@ namespace PowerSet.Main
 			this.SAddProcessBtn = new System.Windows.Forms.Button();
 			this.SStartProcess_Num = new System.Windows.Forms.NumericUpDown();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this.label6 = new System.Windows.Forms.Label();
+			this.Saven_Btn = new System.Windows.Forms.Button();
+			this.PwdBtn = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.CloseBtn = new System.Windows.Forms.Button();
 			this.HiddenChart = new System.Windows.Forms.Button();
-			this.XAxisMax_Val = new System.Windows.Forms.NumericUpDown();
-			this.XAxisMax_Lab = new System.Windows.Forms.Label();
-			this.YAxisMax_Lab = new System.Windows.Forms.Label();
 			this.YAxisMargin_Lab = new System.Windows.Forms.Label();
 			this.XAxisMargin_Lab = new System.Windows.Forms.Label();
 			this.XAxisMargin_Val = new System.Windows.Forms.NumericUpDown();
-			this.YAxisMax_Val = new System.Windows.Forms.NumericUpDown();
 			this.YAxisMargin_Val = new System.Windows.Forms.NumericUpDown();
 			this.Start_Btn = new System.Windows.Forms.Button();
 			this.End_Btn = new System.Windows.Forms.Button();
-			this.Set_Btn = new System.Windows.Forms.Button();
 			this.History_Btn = new System.Windows.Forms.Button();
-			this.Saven_Btn = new System.Windows.Forms.Button();
-			this.BTN = new System.Windows.Forms.Button();
 			this.ChartHight_Val = new System.Windows.Forms.NumericUpDown();
+			this.Pwd = new System.Windows.Forms.TextBox();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this.KEndProcess_Num = new System.Windows.Forms.NumericUpDown();
 			this.label2 = new System.Windows.Forms.Label();
@@ -119,9 +116,7 @@ namespace PowerSet.Main
 			((System.ComponentModel.ISupportInitialize)(this.SParamSetTable)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.SStartProcess_Num)).BeginInit();
 			this.tableLayoutPanel2.SuspendLayout();
-			((System.ComponentModel.ISupportInitialize)(this.XAxisMax_Val)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.XAxisMargin_Val)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.YAxisMax_Val)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.YAxisMargin_Val)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.ChartHight_Val)).BeginInit();
 			this.tableLayoutPanel3.SuspendLayout();
@@ -163,10 +158,10 @@ namespace PowerSet.Main
 			this.Chart.Size = new System.Drawing.Size(1460, 80);
 			this.Chart.TabIndex = 1;
 			this.Chart.Text = "Chart";
-			title1.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
-			title1.Name = "BaseTitle";
-			title1.Text = "吸气剂烘烤过程图";
-			this.Chart.Titles.Add(title1);
+			title2.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F);
+			title2.Name = "BaseTitle";
+			title2.Text = "吸气剂烘烤过程图";
+			this.Chart.Titles.Add(title2);
 			// 
 			// tableLayoutPanel1
 			// 
@@ -302,7 +297,7 @@ namespace PowerSet.Main
 			this.CCurrentI_Lab.Name = "CCurrentI_Lab";
 			this.CCurrentI_Lab.Size = new System.Drawing.Size(102, 40);
 			this.CCurrentI_Lab.TabIndex = 1;
-			this.CCurrentI_Lab.Text = "电流(mA)";
+			this.CCurrentI_Lab.Text = "电流(A)";
 			this.CCurrentI_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// CI_Lab
@@ -358,14 +353,14 @@ namespace PowerSet.Main
 			this.CParamSetTable.AllowUserToAddRows = false;
 			this.CParamSetTable.AllowUserToDeleteRows = false;
 			this.CParamSetTable.BackgroundColor = System.Drawing.Color.Gainsboro;
-			dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle1.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.CParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+			dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle5.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			dataGridViewCellStyle5.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.CParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
 			this.CParamSetTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.tableLayoutPanel6.SetColumnSpan(this.CParamSetTable, 7);
 			this.CParamSetTable.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -488,7 +483,7 @@ namespace PowerSet.Main
 			this.SCurrentI_Lab.Name = "SCurrentI_Lab";
 			this.SCurrentI_Lab.Size = new System.Drawing.Size(102, 40);
 			this.SCurrentI_Lab.TabIndex = 1;
-			this.SCurrentI_Lab.Text = "电流(mA)";
+			this.SCurrentI_Lab.Text = "电流(A)";
 			this.SCurrentI_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// SI_Lab
@@ -523,14 +518,14 @@ namespace PowerSet.Main
 			this.SParamSetTable.AllowUserToAddRows = false;
 			this.SParamSetTable.AllowUserToDeleteRows = false;
 			this.SParamSetTable.BackgroundColor = System.Drawing.Color.Gainsboro;
-			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle2.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.SParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+			dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle6.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			dataGridViewCellStyle6.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.SParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle6;
 			this.SParamSetTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.tableLayoutPanel4.SetColumnSpan(this.SParamSetTable, 7);
 			this.SParamSetTable.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -578,24 +573,21 @@ namespace PowerSet.Main
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
-			this.tableLayoutPanel2.Controls.Add(this.label3, 4, 0);
-			this.tableLayoutPanel2.Controls.Add(this.CloseBtn, 6, 0);
-			this.tableLayoutPanel2.Controls.Add(this.HiddenChart, 6, 1);
-			this.tableLayoutPanel2.Controls.Add(this.XAxisMax_Val, 3, 0);
-			this.tableLayoutPanel2.Controls.Add(this.XAxisMax_Lab, 2, 0);
-			this.tableLayoutPanel2.Controls.Add(this.YAxisMax_Lab, 2, 1);
+			this.tableLayoutPanel2.Controls.Add(this.label6, 2, 1);
+			this.tableLayoutPanel2.Controls.Add(this.Saven_Btn, 8, 1);
+			this.tableLayoutPanel2.Controls.Add(this.PwdBtn, 4, 1);
+			this.tableLayoutPanel2.Controls.Add(this.label3, 2, 0);
+			this.tableLayoutPanel2.Controls.Add(this.CloseBtn, 7, 0);
+			this.tableLayoutPanel2.Controls.Add(this.HiddenChart, 7, 1);
 			this.tableLayoutPanel2.Controls.Add(this.YAxisMargin_Lab, 0, 1);
 			this.tableLayoutPanel2.Controls.Add(this.XAxisMargin_Lab, 0, 0);
 			this.tableLayoutPanel2.Controls.Add(this.XAxisMargin_Val, 1, 0);
-			this.tableLayoutPanel2.Controls.Add(this.YAxisMax_Val, 3, 1);
 			this.tableLayoutPanel2.Controls.Add(this.YAxisMargin_Val, 1, 1);
-			this.tableLayoutPanel2.Controls.Add(this.Start_Btn, 9, 0);
-			this.tableLayoutPanel2.Controls.Add(this.End_Btn, 9, 1);
-			this.tableLayoutPanel2.Controls.Add(this.Set_Btn, 8, 0);
-			this.tableLayoutPanel2.Controls.Add(this.History_Btn, 8, 1);
-			this.tableLayoutPanel2.Controls.Add(this.Saven_Btn, 7, 0);
-			this.tableLayoutPanel2.Controls.Add(this.BTN, 7, 1);
-			this.tableLayoutPanel2.Controls.Add(this.ChartHight_Val, 5, 0);
+			this.tableLayoutPanel2.Controls.Add(this.Start_Btn, 8, 0);
+			this.tableLayoutPanel2.Controls.Add(this.End_Btn, 9, 0);
+			this.tableLayoutPanel2.Controls.Add(this.History_Btn, 9, 1);
+			this.tableLayoutPanel2.Controls.Add(this.ChartHight_Val, 3, 0);
+			this.tableLayoutPanel2.Controls.Add(this.Pwd, 3, 1);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -606,12 +598,49 @@ namespace PowerSet.Main
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(1454, 94);
 			this.tableLayoutPanel2.TabIndex = 0;
 			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.label6.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.label6.Location = new System.Drawing.Point(294, 47);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(138, 46);
+			this.label6.TabIndex = 19;
+			this.label6.Text = "输入密码：";
+			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// Saven_Btn
+			// 
+			this.Saven_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.Saven_Btn.Enabled = false;
+			this.Saven_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.Saven_Btn.Location = new System.Drawing.Point(1164, 50);
+			this.Saven_Btn.Name = "Saven_Btn";
+			this.Saven_Btn.Size = new System.Drawing.Size(138, 40);
+			this.Saven_Btn.TabIndex = 18;
+			this.Saven_Btn.Text = "保存";
+			this.Saven_Btn.UseVisualStyleBackColor = true;
+			// 
+			// PwdBtn
+			// 
+			this.PwdBtn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PwdBtn.Enabled = false;
+			this.PwdBtn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.PwdBtn.Location = new System.Drawing.Point(584, 50);
+			this.PwdBtn.Name = "PwdBtn";
+			this.PwdBtn.Size = new System.Drawing.Size(138, 40);
+			this.PwdBtn.TabIndex = 17;
+			this.PwdBtn.Text = "设置";
+			this.PwdBtn.UseVisualStyleBackColor = true;
+			this.PwdBtn.Click += new System.EventHandler(this.PwdBtn_Click);
+			// 
 			// label3
 			// 
 			this.label3.AutoSize = true;
 			this.label3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.label3.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.label3.Location = new System.Drawing.Point(584, 1);
+			this.label3.Location = new System.Drawing.Point(294, 1);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(138, 45);
 			this.label3.TabIndex = 14;
@@ -625,7 +654,7 @@ namespace PowerSet.Main
 			this.CloseBtn.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.CloseBtn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.CloseBtn.ForeColor = System.Drawing.Color.Red;
-			this.CloseBtn.Location = new System.Drawing.Point(874, 4);
+			this.CloseBtn.Location = new System.Drawing.Point(1019, 4);
 			this.CloseBtn.Name = "CloseBtn";
 			this.CloseBtn.Size = new System.Drawing.Size(138, 39);
 			this.CloseBtn.TabIndex = 0;
@@ -640,55 +669,13 @@ namespace PowerSet.Main
 			this.HiddenChart.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.HiddenChart.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.HiddenChart.ForeColor = System.Drawing.Color.DarkOrange;
-			this.HiddenChart.Location = new System.Drawing.Point(874, 50);
+			this.HiddenChart.Location = new System.Drawing.Point(1019, 50);
 			this.HiddenChart.Name = "HiddenChart";
 			this.HiddenChart.Size = new System.Drawing.Size(138, 40);
 			this.HiddenChart.TabIndex = 2;
 			this.HiddenChart.Text = "隐藏折线图";
 			this.HiddenChart.UseVisualStyleBackColor = false;
 			this.HiddenChart.Click += new System.EventHandler(this.HiddenChartClick);
-			// 
-			// XAxisMax_Val
-			// 
-			this.XAxisMax_Val.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.XAxisMax_Val.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.XAxisMax_Val.Location = new System.Drawing.Point(439, 9);
-			this.XAxisMax_Val.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-			this.XAxisMax_Val.Name = "XAxisMax_Val";
-			this.XAxisMax_Val.Size = new System.Drawing.Size(138, 29);
-			this.XAxisMax_Val.TabIndex = 5;
-			this.XAxisMax_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.XAxisMax_Val.Visible = false;
-			// 
-			// XAxisMax_Lab
-			// 
-			this.XAxisMax_Lab.AutoSize = true;
-			this.XAxisMax_Lab.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.XAxisMax_Lab.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.XAxisMax_Lab.Location = new System.Drawing.Point(294, 1);
-			this.XAxisMax_Lab.Name = "XAxisMax_Lab";
-			this.XAxisMax_Lab.Size = new System.Drawing.Size(138, 45);
-			this.XAxisMax_Lab.TabIndex = 3;
-			this.XAxisMax_Lab.Text = "X轴最大值：";
-			this.XAxisMax_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.XAxisMax_Lab.Visible = false;
-			// 
-			// YAxisMax_Lab
-			// 
-			this.YAxisMax_Lab.AutoSize = true;
-			this.YAxisMax_Lab.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.YAxisMax_Lab.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.YAxisMax_Lab.Location = new System.Drawing.Point(294, 47);
-			this.YAxisMax_Lab.Name = "YAxisMax_Lab";
-			this.YAxisMax_Lab.Size = new System.Drawing.Size(138, 46);
-			this.YAxisMax_Lab.TabIndex = 2;
-			this.YAxisMax_Lab.Text = "Y轴最大值：";
-			this.YAxisMax_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.YAxisMax_Lab.Visible = false;
 			// 
 			// YAxisMargin_Lab
 			// 
@@ -729,22 +716,6 @@ namespace PowerSet.Main
 			this.XAxisMargin_Val.TabIndex = 4;
 			this.XAxisMargin_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
-			// YAxisMax_Val
-			// 
-			this.YAxisMax_Val.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.YAxisMax_Val.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.YAxisMax_Val.Location = new System.Drawing.Point(439, 55);
-			this.YAxisMax_Val.Maximum = new decimal(new int[] {
-            99999,
-            0,
-            0,
-            0});
-			this.YAxisMax_Val.Name = "YAxisMax_Val";
-			this.YAxisMax_Val.Size = new System.Drawing.Size(138, 29);
-			this.YAxisMax_Val.TabIndex = 6;
-			this.YAxisMax_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.YAxisMax_Val.Visible = false;
-			// 
 			// YAxisMargin_Val
 			// 
 			this.YAxisMargin_Val.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
@@ -772,9 +743,9 @@ namespace PowerSet.Main
 			this.Start_Btn.Enabled = false;
 			this.Start_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Start_Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.Start_Btn.Location = new System.Drawing.Point(1309, 4);
+			this.Start_Btn.Location = new System.Drawing.Point(1164, 4);
 			this.Start_Btn.Name = "Start_Btn";
-			this.Start_Btn.Size = new System.Drawing.Size(141, 39);
+			this.Start_Btn.Size = new System.Drawing.Size(138, 39);
 			this.Start_Btn.TabIndex = 8;
 			this.Start_Btn.Text = "开始";
 			this.Start_Btn.UseVisualStyleBackColor = true;
@@ -785,62 +756,28 @@ namespace PowerSet.Main
 			this.End_Btn.Enabled = false;
 			this.End_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.End_Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.End_Btn.Location = new System.Drawing.Point(1309, 50);
+			this.End_Btn.Location = new System.Drawing.Point(1309, 4);
 			this.End_Btn.Name = "End_Btn";
-			this.End_Btn.Size = new System.Drawing.Size(141, 40);
+			this.End_Btn.Size = new System.Drawing.Size(141, 39);
 			this.End_Btn.TabIndex = 9;
 			this.End_Btn.Text = "结束";
 			this.End_Btn.UseVisualStyleBackColor = true;
-			// 
-			// Set_Btn
-			// 
-			this.Set_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.Set_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.Set_Btn.Location = new System.Drawing.Point(1164, 4);
-			this.Set_Btn.Name = "Set_Btn";
-			this.Set_Btn.Size = new System.Drawing.Size(138, 39);
-			this.Set_Btn.TabIndex = 10;
-			this.Set_Btn.Text = "设置";
-			this.Set_Btn.UseVisualStyleBackColor = true;
 			// 
 			// History_Btn
 			// 
 			this.History_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.History_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.History_Btn.Location = new System.Drawing.Point(1164, 50);
+			this.History_Btn.Location = new System.Drawing.Point(1309, 50);
 			this.History_Btn.Name = "History_Btn";
-			this.History_Btn.Size = new System.Drawing.Size(138, 40);
+			this.History_Btn.Size = new System.Drawing.Size(141, 40);
 			this.History_Btn.TabIndex = 11;
 			this.History_Btn.Text = "历史记录";
 			this.History_Btn.UseVisualStyleBackColor = true;
 			// 
-			// Saven_Btn
-			// 
-			this.Saven_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.Saven_Btn.Enabled = false;
-			this.Saven_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.Saven_Btn.Location = new System.Drawing.Point(1019, 4);
-			this.Saven_Btn.Name = "Saven_Btn";
-			this.Saven_Btn.Size = new System.Drawing.Size(138, 39);
-			this.Saven_Btn.TabIndex = 12;
-			this.Saven_Btn.Text = "保存";
-			this.Saven_Btn.UseVisualStyleBackColor = true;
-			// 
-			// BTN
-			// 
-			this.BTN.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.BTN.Enabled = false;
-			this.BTN.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.BTN.Location = new System.Drawing.Point(1019, 50);
-			this.BTN.Name = "BTN";
-			this.BTN.Size = new System.Drawing.Size(138, 40);
-			this.BTN.TabIndex = 13;
-			this.BTN.UseVisualStyleBackColor = true;
-			// 
 			// ChartHight_Val
 			// 
 			this.ChartHight_Val.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-			this.ChartHight_Val.Location = new System.Drawing.Point(729, 7);
+			this.ChartHight_Val.Location = new System.Drawing.Point(439, 7);
 			this.ChartHight_Val.Maximum = new decimal(new int[] {
             85,
             0,
@@ -861,6 +798,20 @@ namespace PowerSet.Main
             0,
             0});
 			this.ChartHight_Val.ValueChanged += new System.EventHandler(this.ChartHight_Val_Changed);
+			// 
+			// Pwd
+			// 
+			this.Pwd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.Pwd.Location = new System.Drawing.Point(436, 50);
+			this.Pwd.Margin = new System.Windows.Forms.Padding(0);
+			this.Pwd.MaxLength = 12;
+			this.Pwd.Multiline = true;
+			this.Pwd.Name = "Pwd";
+			this.Pwd.PasswordChar = '*';
+			this.Pwd.Size = new System.Drawing.Size(144, 40);
+			this.Pwd.TabIndex = 16;
+			this.Pwd.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.Pwd.TextChanged += new System.EventHandler(this.Pwd_TextChanged);
 			// 
 			// tableLayoutPanel3
 			// 
@@ -973,7 +924,7 @@ namespace PowerSet.Main
 			this.KCurrentI_Lab.Name = "KCurrentI_Lab";
 			this.KCurrentI_Lab.Size = new System.Drawing.Size(102, 40);
 			this.KCurrentI_Lab.TabIndex = 1;
-			this.KCurrentI_Lab.Text = "电流(mA)";
+			this.KCurrentI_Lab.Text = "电流(A)";
 			this.KCurrentI_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// KI_Lab
@@ -1014,7 +965,6 @@ namespace PowerSet.Main
 			this.KAddProcessBtn.TabIndex = 6;
 			this.KAddProcessBtn.Text = "添加周期";
 			this.KAddProcessBtn.UseVisualStyleBackColor = true;
-			this.KAddProcessBtn.Click += new System.EventHandler(this.AddProcessBtn_Click);
 			// 
 			// KStartProcess_Num
 			// 
@@ -1030,14 +980,14 @@ namespace PowerSet.Main
 			this.KParamSetTable.AllowUserToAddRows = false;
 			this.KParamSetTable.AllowUserToDeleteRows = false;
 			this.KParamSetTable.BackgroundColor = System.Drawing.Color.Gainsboro;
-			dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle3.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.KParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+			dataGridViewCellStyle7.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle7.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle7.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			dataGridViewCellStyle7.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle7.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle7.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle7.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.KParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle7;
 			this.KParamSetTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.tableLayoutPanel3.SetColumnSpan(this.KParamSetTable, 7);
 			this.KParamSetTable.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1160,7 +1110,7 @@ namespace PowerSet.Main
 			this.NCurrentI_Lab.Name = "NCurrentI_Lab";
 			this.NCurrentI_Lab.Size = new System.Drawing.Size(102, 40);
 			this.NCurrentI_Lab.TabIndex = 1;
-			this.NCurrentI_Lab.Text = "电流(mA)";
+			this.NCurrentI_Lab.Text = "电流(A)";
 			this.NCurrentI_Lab.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// NI_Lab
@@ -1195,14 +1145,14 @@ namespace PowerSet.Main
 			this.NParamSetTable.AllowUserToAddRows = false;
 			this.NParamSetTable.AllowUserToDeleteRows = false;
 			this.NParamSetTable.BackgroundColor = System.Drawing.Color.Gainsboro;
-			dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-			dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-			dataGridViewCellStyle4.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-			dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-			dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-			dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-			this.NParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+			dataGridViewCellStyle8.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+			dataGridViewCellStyle8.BackColor = System.Drawing.SystemColors.Control;
+			dataGridViewCellStyle8.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			dataGridViewCellStyle8.ForeColor = System.Drawing.SystemColors.WindowText;
+			dataGridViewCellStyle8.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+			dataGridViewCellStyle8.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+			dataGridViewCellStyle8.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+			this.NParamSetTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle8;
 			this.NParamSetTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
 			this.tableLayoutPanel5.SetColumnSpan(this.NParamSetTable, 7);
 			this.NParamSetTable.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -1270,9 +1220,7 @@ namespace PowerSet.Main
 			((System.ComponentModel.ISupportInitialize)(this.SStartProcess_Num)).EndInit();
 			this.tableLayoutPanel2.ResumeLayout(false);
 			this.tableLayoutPanel2.PerformLayout();
-			((System.ComponentModel.ISupportInitialize)(this.XAxisMax_Val)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.XAxisMargin_Val)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.YAxisMax_Val)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.YAxisMargin_Val)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.ChartHight_Val)).EndInit();
 			this.tableLayoutPanel3.ResumeLayout(false);
@@ -1299,18 +1247,11 @@ namespace PowerSet.Main
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
 		private System.Windows.Forms.Label XAxisMargin_Lab;
 		private System.Windows.Forms.Label YAxisMargin_Lab;
-		private System.Windows.Forms.Label XAxisMax_Lab;
-		private System.Windows.Forms.Label YAxisMax_Lab;
-		private System.Windows.Forms.NumericUpDown XAxisMax_Val;
 		private System.Windows.Forms.NumericUpDown XAxisMargin_Val;
-		private System.Windows.Forms.NumericUpDown YAxisMax_Val;
 		private System.Windows.Forms.NumericUpDown YAxisMargin_Val;
 		private System.Windows.Forms.Button Start_Btn;
 		private System.Windows.Forms.Button End_Btn;
-		private System.Windows.Forms.Button Set_Btn;
 		private System.Windows.Forms.Button History_Btn;
-		private System.Windows.Forms.Button Saven_Btn;
-		private System.Windows.Forms.Button BTN;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
 		private System.Windows.Forms.Label KI_Lab;
 		private System.Windows.Forms.Label KCurrentI_Lab;
@@ -1361,5 +1302,9 @@ namespace PowerSet.Main
 		private System.Windows.Forms.Button NAddProcessBtn;
 		private System.Windows.Forms.NumericUpDown NStartProcess_Num;
 		private System.Windows.Forms.DataGridView KParamSetTable;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.Button Saven_Btn;
+		private System.Windows.Forms.Button PwdBtn;
+		private System.Windows.Forms.TextBox Pwd;
 	}
 }

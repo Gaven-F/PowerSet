@@ -2726,7 +2726,6 @@ namespace PowerSet.Main
             {
                 case "K":
                     CurSetVal_K = (int)value;
-                    CurReadVal_K = (int)value;
                     return CurSetVal_K;
                 case "N":
                     CurSetVal_Na = (int)value;

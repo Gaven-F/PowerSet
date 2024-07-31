@@ -10,7 +10,6 @@ using System.Windows.Forms.DataVisualization.Charting;
 using PowerSet.Attributes;
 using PowerSet.Utils;
 using SqlSugar;
-using SqlSugar.Extensions;
 using C = PowerSet.Main.ConstData;
 
 namespace PowerSet.Main
@@ -18,6 +17,15 @@ namespace PowerSet.Main
     public partial class MainForm : Form
     {
         #region Fileds
+        private bool Lock = true;
+        private readonly List<string> DisableControllNameSuffix = new List<string>
+        {
+            C.UI_I_LAB,
+            C.UI_ADD_PROCESS_BTN,
+            C.UI_TUBE_VAL_TEXT,
+            C.UI_START_PROCESS_NUM,
+            C.UI_END_PROCESS_NUM
+        };
         private readonly List<string> ReadOnlyTableCol = new List<string> { "周期", "执行次数", "实际电流" };
         private readonly List<string> HiddenTableCol = new List<string> { "实际电流" };
 
@@ -81,6 +89,17 @@ namespace PowerSet.Main
             InitChart();
             EventBind();
             StartProcess();
+
+            Prefix.ForEach(p =>
+            {
+                var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
+                for (int i = 0; i < table.Columns.Count; i++)
+                {
+                    if (i == 0 || i == 5)
+                        continue;
+                    table.Columns[i].ReadOnly = Lock;
+                }
+            });
         }
 
         /// <summary>
@@ -141,7 +160,19 @@ namespace PowerSet.Main
                 {
                     if (!ProcessStart[p])
                         return;
-                    CycleControllers.Add(p, new CycleController(DataTables[p], p));
+
+                    CycleControllers.Add(
+                        p,
+                        new CycleController(DataTables[p], p)
+                        {
+                            CurrentCycle = Convert.ToInt32(
+                                (Uis[p + C.UI_START_PROCESS_NUM] as NumericUpDown).Value
+                            ),
+                            EndCycle = Convert.ToInt32(
+                                (Uis[p + C.UI_END_PROCESS_NUM] as NumericUpDown).Value
+                            )
+                        }
+                    );
 
                     var cycles = CycleControllers[p].Cycles;
                     cycles.ForEach(c =>
@@ -157,6 +188,17 @@ namespace PowerSet.Main
             {
                 Stopwatch.Stop();
             }
+
+            Prefix.ForEach(p =>
+            {
+                DisableControllNameSuffix.ForEach(suffix =>
+                {
+                    UpdateControlProperty(
+                        Uis[p + suffix],
+                        new Action(() => Uis[p + suffix].Enabled = !Start.Val)
+                    );
+                });
+            });
         }
 
         /// <summary>
@@ -272,7 +314,10 @@ namespace PowerSet.Main
             });
 
             AddDataToChart();
-            Prefix.ForEach(p => { });
+
+            if (CycleControllers.Any(it => it.Value.IsFinish))
+                Start.Val = false;
+
             RSecond++;
         }
 
@@ -299,13 +344,22 @@ namespace PowerSet.Main
             {
                 var val = .0;
                 if (ProcessStart[p])
-#if DEBUG
                     val = PowerController.GetI(p) / 1000.0;
-#else
-                    val = PowerController.GetI(p) / 1000.0;
-#endif
                 else
                     val = 0;
+
+                if (val <= 10)
+                {
+                    var lab = Uis[p + C.UI_I_VAL_LAB];
+                    UpdateControlProperty(
+                        lab,
+                        new Action(() =>
+                        {
+                            lab.BackColor = System.Drawing.Color.Red;
+                            Start.Val = false;
+                        })
+                    );
+                }
                 RealVals[p] = val;
             });
             //Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000.0);
@@ -509,7 +563,7 @@ namespace PowerSet.Main
                 );
             }
 
-			DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
+            DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
         }
 
         // TODO: 清除灰色
@@ -554,6 +608,22 @@ namespace PowerSet.Main
                     if (c.Length > 0)
                         Uis.Add(c[0].Name, c[0]);
                 });
+
+                if (
+                    Uis.TryGetValue(p + C.UI_START_PROCESS_NUM, out var cStartNum)
+                    && cStartNum is NumericUpDown startNum
+                )
+                {
+                    startNum.Value = 1;
+                }
+
+                if (
+                    Uis.TryGetValue(p + C.UI_END_PROCESS_NUM, out var cEndNum)
+                    && cEndNum is NumericUpDown endtNum
+                )
+                {
+                    endtNum.Value = 12;
+                }
             });
         }
 
@@ -661,6 +731,37 @@ namespace PowerSet.Main
             if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
             {
                 e.Handled = true;
+            }
+        }
+
+        private void PwdBtn_Click(object sender, EventArgs e)
+        {
+            Lock = !Lock;
+
+            if (Pwd.Text == "123456")
+            {
+                Prefix.ForEach(p =>
+                {
+                    var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
+                    for (int i = 0; i < table.Columns.Count; i++)
+                    {
+                        if (i == 0 || i == 5)
+                            continue;
+                        table.Columns[i].ReadOnly = Lock;
+                    }
+                });
+            }
+        }
+
+        private void Pwd_TextChanged(object sender, EventArgs e)
+        {
+            if (Pwd.Text == "123456")
+            {
+                UpdateControlProperty(PwdBtn, new Action(() => PwdBtn.Enabled = true));
+            }
+            else
+            {
+                UpdateControlProperty(PwdBtn, new Action(() => PwdBtn.Enabled = false));
             }
         }
     }
