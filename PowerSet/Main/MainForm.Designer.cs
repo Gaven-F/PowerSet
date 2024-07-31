@@ -1014,7 +1014,7 @@ namespace PowerSet.Main
 			this.KAddProcessBtn.TabIndex = 6;
 			this.KAddProcessBtn.Text = "添加周期";
 			this.KAddProcessBtn.UseVisualStyleBackColor = true;
-			this.KAddProcessBtn.Click += new System.EventHandler(this.KAddProcessBtn_Click);
+			this.KAddProcessBtn.Click += new System.EventHandler(this.AddProcessBtn_Click);
 			// 
 			// KStartProcess_Num
 			// 

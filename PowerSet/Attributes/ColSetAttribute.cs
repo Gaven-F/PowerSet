@@ -6,7 +6,7 @@
         public string Name { get; set; }
         public bool Show { get; set; }
 
-        public string DefaultVal { get; set; } = "";
+        public object DefaultVal { get; set; }
 
         public ColSetAttribute(string name = null, bool show = true)
         {

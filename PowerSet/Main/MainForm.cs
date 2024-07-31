@@ -109,8 +109,14 @@ namespace PowerSet.Main
 
             Prefix.ForEach(p =>
             {
-                if (Uis.TryGetValue(p + C.UI_I_LAB, out var c) && c is Label)
-                    c.Click += LabClick;
+                if (Uis.TryGetValue(p + C.UI_I_LAB, out var uiLab) && uiLab is Label)
+                {
+                    uiLab.Click += LabClick;
+                }
+                if (Uis.TryGetValue(p + C.UI_ADD_PROCESS_BTN, out var addbtn) && addbtn is Button)
+                {
+                    addbtn.Click += AddProcessBtn_Click;
+                }
             });
         }
 
@@ -119,15 +125,14 @@ namespace PowerSet.Main
             Start.Val = !Start.Val;
             if (Start.Val)
             {
+                ChartData.Clear();
+                Chart.DataBind();
+                CycleControllers.Clear();
                 Time = DateTime.Now;
-                //Stopwatch.Reset();
-                //Stopwatch.Start();
                 RSecond = 1;
-                VSecond = 0;
+                VSecond = 1;
                 ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
 
-                ChartData.Clear();
-                CycleControllers.Clear();
 
                 Prefix.ForEach(p =>
                 {
@@ -285,17 +290,26 @@ namespace PowerSet.Main
         /// </summary>
         private void GetRealData()
         {
+            Prefix.ForEach(p =>
+            {
+                var val = .0;
+                if (ProcessStart[p])
 #if DEBUG
-            Prefix.ForEach(p => RealVals[p] = R.NextDouble() * 4);
+                    val = R.NextDouble() * 4;
 #else
-            Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000.0);
+                    val = PowerController.GetI(p) / 1000.0;
+#endif
+                else
+                    val = 0;
+                RealVals[p] = val;
+            });
+            //Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000.0);
             //PowerController.OpenI(C.K);
             //PowerController.OpenI(C.N);
             //PowerController.OpenI(C.C);
             //PowerController.OpenI(C.S);
             //PowerController.SetI("K", 0);
             //PowerController.SetI("N", 0);
-#endif
         }
 
         /// <summary>
@@ -516,17 +530,25 @@ namespace PowerSet.Main
             SplitLayout.Panel1Collapsed = !SplitLayout.Panel1Collapsed;
 
         // TODO: 统一管理
-        private void KAddProcessBtn_Click(object sender, EventArgs e)
+        private void AddProcessBtn_Click(object sender, EventArgs e)
         {
-            (KParamSetTable.DataSource as DataTable).Rows.Add(
-                $"周期{KParamSetTable.RowCount + 1: 000}",
-                "1000",
-                "1000",
-                "0",
-                "0",
-                "0",
-                "0"
-            );
+            var btn = (Button)sender;
+            Prefix.ForEach(p =>
+            {
+                if (!btn.Name.StartsWith(p))
+                    return;
+                if (Uis.TryGetValue(p + C.UI_PARAM_SET_TABLE, out var c) && c is DataGridView table)
+                {
+                    (table.DataSource as DataTable).Rows.Add(
+                        $"周期{table.RowCount + 1: 000}",
+                        1000,
+                        30,
+                        30,
+                        10,
+                        0
+                    );
+                }
+            });
         }
 
         private void ChartHight_Val_Changed(object sender, EventArgs e)
