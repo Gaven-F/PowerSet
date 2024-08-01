@@ -152,6 +152,7 @@ namespace PowerSet.Main
                 {
                     addbtn.Click += AddProcessBtn_Click;
                 }
+                (Uis[p + C.UI_TUBE_VAL_TEXT] as MaskedTextBox).TextChanged += Tube_Changed;
             });
         }
 
@@ -159,6 +160,10 @@ namespace PowerSet.Main
         {
             CanSave.Val = false;
             Start.Val = !Start.Val;
+            if (Chart.Series.FirstOrDefault(it => it.Name == "History") is Series s)
+            {
+                Chart.Series.Remove(s);
+            }
 
             if (Start.Val)
             {
@@ -180,6 +185,16 @@ namespace PowerSet.Main
                 {
                     if (!ProcessStart[p])
                         return;
+
+                    var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
+
+                    UpdateControlProperty(table, new Action(() =>
+                    {
+                        foreach (DataGridViewRow row in table.Rows)
+                        {
+                            row.Cells[5].Value = "";
+                        }
+                    }));
 
                     CycleControllers.Add(
                         p,
@@ -378,7 +393,8 @@ namespace PowerSet.Main
                 RealVals[C.K],
                 RealVals[C.N],
                 RealVals[C.C],
-                RealVals[C.S]
+                RealVals[C.S],
+                -1
             );
         }
 
@@ -395,7 +411,7 @@ namespace PowerSet.Main
                 else
                     val = 0;
 
-                if (val <= 10 && ProcessStart[p])
+                if (val <= 0.1 && ProcessStart[p])
                 {
                     var lab = Uis[p + C.UI_I_VAL_LAB];
                     UpdateControlProperty(
@@ -404,7 +420,7 @@ namespace PowerSet.Main
                         {
                             CanSave.Val = true;
                             lab.BackColor = System.Drawing.Color.Red;
-                            Start.Val = false;
+                            //Start.Val = false;
                         })
                     );
                 }
@@ -450,7 +466,7 @@ namespace PowerSet.Main
 
             chartArea.AxisY.Interval = Convert.ToDouble(YAxisMargin_Val.Value);
 
-            chartArea.AxisX.Minimum = 2;
+            chartArea.AxisX.Minimum = 1;
 
             chartArea.AxisX.Maximum = 60;
             chartArea.AxisY.Maximum = 5;
@@ -466,10 +482,12 @@ namespace PowerSet.Main
             {
                 ChartData.Columns.Add($"{p}Y");
             });
+            ChartData.Columns.Add("YHistory");
+
             ChartData.RowChanged += Data_Changed;
             for (int i = 0; i < 62; i++)
             {
-                ChartData.Rows.Add($"{i - 1}秒", -1, -1, -1, -1);
+                ChartData.Rows.Add($"{i - 1}秒", -1, -1, -1, -1, -1);
             }
             //ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
             //ChartData.Rows.Add("1秒", 0.0, 0.0, 0.0, 0.0);
@@ -632,7 +650,10 @@ namespace PowerSet.Main
                 );
             }
 
-            DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
+            UpdateControlProperty(Uis[arg.Flag + C.UI_PARAM_SET_TABLE], new Action(() =>
+            {
+                DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
+            }));
         }
 
         // TODO: 设置可更改默认参数
@@ -869,7 +890,7 @@ namespace PowerSet.Main
                 if (!Data.TryGetValue(p, out var d))
                     return;
                 var tableName =
-                    $"{p}_{(Uis[p + C.UI_TUBE_VAL_TEXT] as TextBox).Text}_{DateTime.UtcNow.ToFileTimeUtc()}";
+                    $"{p}_{(Uis[p + C.UI_TUBE_VAL_TEXT] as MaskedTextBox).Text}_{DateTime.UtcNow.ToFileTimeUtc()}";
 
                 GF_SqlHelper.Core.InitTable<RealIData>(tableName);
                 GF_SqlHelper.Core.AddData(tableName, d);
@@ -892,14 +913,33 @@ namespace PowerSet.Main
                         ChartType = SeriesChartType.StepLine,
                         Legend = C.BASE_LEGEND,
                         BorderWidth = 4,
+                        BorderColor = Color.Red,
+                        Color = Color.Red,
+                        XValueMember = "X",
+                        YValueMembers = "YHistory"
                     }
                 );
             }
+            ChartData.Clear();
+            //ChartData.Columns
+
             Data["History"]
                 .ForEach(d =>
                 {
-                    Chart.Series["History"].Points.AddXY(d.XVal, d.YVal);
+                    ChartData.Rows.Add($"{d.XVal}秒", -1, -1, -1, -1, d.YVal);
+
+                    //Chart.Series["History"].Points.AddXY(d.XVal, d.YVal);
                 });
+            Chart.DataBind();
+        }
+
+        private void Tube_Changed(object sender, EventArgs e)
+        {
+            var c = sender as MaskedTextBox;
+            if (DbHelper.DbInstance.DbMaintenance.GetTableInfoList().Where(it => it.Name.Contains("_")).Select(it => it.Name.Split('_')[1]).Contains(c.Text))
+            {
+                MessageBox.Show("管号重复！");
+            }
         }
     }
 }

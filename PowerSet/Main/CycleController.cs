@@ -56,7 +56,7 @@ namespace PowerSet.Main
         private bool _isFinish = false;
         public bool IsFinish
         {
-            get => CurrentCycle + 1 > EndCycle | false;
+            get => CurrentCycle > EndCycle | false;
             set { _isFinish = value; }
         }
 
@@ -69,14 +69,19 @@ namespace PowerSet.Main
             return Cycles[CurrentCycle - 1];
         }
 
+        public Cycle GetNextCycle()
+        {
+            return Cycles[CurrentCycle ];
+        }
+
         public bool TryEnterNextCycle()
         {
             if (GetCurrentCycle().IsFinish)
             {
+                GetNextCycle().Start();
                 CurrentCycle++;
-                GetCurrentCycle().Start();
                 EnterNextCycle?.Invoke();
-                Debug.WriteLine(CurrentCycle);
+                Debug.WriteLine($"CurrentCycle: {CurrentCycle}");
                 return true;
             }
             return false;
