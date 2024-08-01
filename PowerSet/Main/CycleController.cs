@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
+using SqlSugar.SplitTableExtensions;
 
 namespace PowerSet.Main
 {
@@ -24,7 +25,13 @@ namespace PowerSet.Main
                 var row = table.Rows[i];
                 var c = new Cycle()
                 {
-                    Index = i,
+                    Index =
+                        Convert.ToInt32(
+                            table
+                                .Rows[i][0]
+                                .ToString()
+                                .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1]
+                        ) - 1,
                     Value = Convert.ToInt32(row[1]),
                     WorkTime = Convert.ToInt32(row[2]),
                     SleepTime = Convert.ToInt32(row[3]),

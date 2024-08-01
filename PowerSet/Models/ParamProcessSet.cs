@@ -4,12 +4,23 @@ namespace PowerSet.Main
 {
     class ParamProcessSet : GF_SqlHelper.BaseClass.BaseTable
     {
+        public ParamProcessSet() { }
+
+        public ParamProcessSet(int index, int i, int processTime, int closeTime, int processCnt)
+        {
+            ProcessIndex = index;
+            I = i;
+            ProcessTime = processTime;
+            CloseTime = closeTime;
+            ProcessCnt = processCnt;
+        }
+
         [ColSet("周期", DefaultVal = 0)]
         public int ProcessIndex { get; set; } = -1;
 
         [ColSet("电流设置", DefaultVal = 1000)]
         public int I { get; set; } = -1;
-        
+
         [ColSet("实际电流", false, DefaultVal = 0)]
         public int RealI { get; set; } = -1;
 

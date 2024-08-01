@@ -101,6 +101,8 @@ namespace PowerSet.Main
 			this.NParamSetTable = new System.Windows.Forms.DataGridView();
 			this.NAddProcessBtn = new System.Windows.Forms.Button();
 			this.NStartProcess_Num = new System.Windows.Forms.NumericUpDown();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.TubeSelect = new System.Windows.Forms.ComboBox();
 			((System.ComponentModel.ISupportInitialize)(this.SplitLayout)).BeginInit();
 			this.SplitLayout.Panel1.SuspendLayout();
 			this.SplitLayout.Panel2.SuspendLayout();
@@ -127,6 +129,7 @@ namespace PowerSet.Main
 			((System.ComponentModel.ISupportInitialize)(this.NEndProcess_Num)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.NParamSetTable)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.NStartProcess_Num)).BeginInit();
+			this.panel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// SplitLayout
@@ -325,6 +328,7 @@ namespace PowerSet.Main
 			this.CTube_Val.Name = "CTube_Val";
 			this.CTube_Val.Size = new System.Drawing.Size(205, 40);
 			this.CTube_Val.TabIndex = 4;
+			this.CTube_Val.Text = "TUBE";
 			this.CTube_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// CAddProcessBtn
@@ -511,6 +515,7 @@ namespace PowerSet.Main
 			this.STube_Val.Name = "STube_Val";
 			this.STube_Val.Size = new System.Drawing.Size(205, 40);
 			this.STube_Val.TabIndex = 4;
+			this.STube_Val.Text = "TUBE";
 			this.STube_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// SParamSetTable
@@ -585,9 +590,10 @@ namespace PowerSet.Main
 			this.tableLayoutPanel2.Controls.Add(this.YAxisMargin_Val, 1, 1);
 			this.tableLayoutPanel2.Controls.Add(this.Start_Btn, 8, 0);
 			this.tableLayoutPanel2.Controls.Add(this.End_Btn, 9, 0);
-			this.tableLayoutPanel2.Controls.Add(this.History_Btn, 9, 1);
+			this.tableLayoutPanel2.Controls.Add(this.History_Btn, 6, 0);
 			this.tableLayoutPanel2.Controls.Add(this.ChartHight_Val, 3, 0);
 			this.tableLayoutPanel2.Controls.Add(this.Pwd, 3, 1);
+			this.tableLayoutPanel2.Controls.Add(this.panel1, 4, 0);
 			this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
@@ -610,17 +616,18 @@ namespace PowerSet.Main
 			this.label6.Text = "输入密码：";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
-			// Saven_Btn
+			// Save_Btn
 			// 
 			this.Save_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.Save_Btn.Enabled = false;
 			this.Save_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
 			this.Save_Btn.Location = new System.Drawing.Point(1164, 50);
-			this.Save_Btn.Name = "Saven_Btn";
+			this.Save_Btn.Name = "Save_Btn";
 			this.Save_Btn.Size = new System.Drawing.Size(138, 40);
 			this.Save_Btn.TabIndex = 18;
 			this.Save_Btn.Text = "保存";
 			this.Save_Btn.UseVisualStyleBackColor = true;
+			this.Save_Btn.Click += new System.EventHandler(this.Save_Btn_Click);
 			// 
 			// PwdBtn
 			// 
@@ -758,7 +765,8 @@ namespace PowerSet.Main
 			this.End_Btn.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
 			this.End_Btn.Location = new System.Drawing.Point(1309, 4);
 			this.End_Btn.Name = "End_Btn";
-			this.End_Btn.Size = new System.Drawing.Size(141, 39);
+			this.tableLayoutPanel2.SetRowSpan(this.End_Btn, 2);
+			this.End_Btn.Size = new System.Drawing.Size(141, 86);
 			this.End_Btn.TabIndex = 9;
 			this.End_Btn.Text = "结束";
 			this.End_Btn.UseVisualStyleBackColor = true;
@@ -767,12 +775,13 @@ namespace PowerSet.Main
 			// 
 			this.History_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.History_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.History_Btn.Location = new System.Drawing.Point(1309, 50);
+			this.History_Btn.Location = new System.Drawing.Point(874, 4);
 			this.History_Btn.Name = "History_Btn";
-			this.History_Btn.Size = new System.Drawing.Size(141, 40);
+			this.History_Btn.Size = new System.Drawing.Size(138, 39);
 			this.History_Btn.TabIndex = 11;
 			this.History_Btn.Text = "历史记录";
 			this.History_Btn.UseVisualStyleBackColor = true;
+			this.History_Btn.Click += new System.EventHandler(this.History_Btn_Click);
 			// 
 			// ChartHight_Val
 			// 
@@ -952,6 +961,7 @@ namespace PowerSet.Main
 			this.KTube_Val.Name = "KTube_Val";
 			this.KTube_Val.Size = new System.Drawing.Size(205, 40);
 			this.KTube_Val.TabIndex = 4;
+			this.KTube_Val.Text = "TUBE";
 			this.KTube_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// KAddProcessBtn
@@ -1138,6 +1148,7 @@ namespace PowerSet.Main
 			this.NTube_Val.Name = "NTube_Val";
 			this.NTube_Val.Size = new System.Drawing.Size(205, 40);
 			this.NTube_Val.TabIndex = 4;
+			this.NTube_Val.Text = "TUBE";
 			this.NTube_Val.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// NParamSetTable
@@ -1184,6 +1195,27 @@ namespace PowerSet.Main
 			this.NStartProcess_Num.Size = new System.Drawing.Size(96, 33);
 			this.NStartProcess_Num.TabIndex = 9;
 			this.NStartProcess_Num.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// panel1
+			// 
+			this.tableLayoutPanel2.SetColumnSpan(this.panel1, 2);
+			this.panel1.Controls.Add(this.TubeSelect);
+			this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.panel1.Location = new System.Drawing.Point(581, 1);
+			this.panel1.Margin = new System.Windows.Forms.Padding(0);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(289, 45);
+			this.panel1.TabIndex = 20;
+			// 
+			// TubeSelect
+			// 
+			this.TubeSelect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this.TubeSelect.Font = new System.Drawing.Font("微软雅黑", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.TubeSelect.FormattingEnabled = true;
+			this.TubeSelect.Location = new System.Drawing.Point(2, 4);
+			this.TubeSelect.Name = "TubeSelect";
+			this.TubeSelect.Size = new System.Drawing.Size(283, 36);
+			this.TubeSelect.TabIndex = 0;
 			// 
 			// MainForm
 			// 
@@ -1233,6 +1265,7 @@ namespace PowerSet.Main
 			((System.ComponentModel.ISupportInitialize)(this.NEndProcess_Num)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.NParamSetTable)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.NStartProcess_Num)).EndInit();
+			this.panel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -1306,5 +1339,7 @@ namespace PowerSet.Main
 		private System.Windows.Forms.Button Save_Btn;
 		private System.Windows.Forms.Button PwdBtn;
 		private System.Windows.Forms.TextBox Pwd;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.ComboBox TubeSelect;
 	}
 }

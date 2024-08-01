@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using GF_SqlHelper;
 using PowerSet.Attributes;
 using PowerSet.Utils;
 using SqlSugar;
@@ -59,6 +61,8 @@ namespace PowerSet.Main
 
         private readonly DataTable ChartData = new DataTable();
 
+        private readonly Dictionary<string, TextBox> Tubes = new Dictionary<string, TextBox>();
+
         private System.Threading.Timer MainTimer;
 
         private readonly PowerController PowerController = new PowerController();
@@ -77,6 +81,8 @@ namespace PowerSet.Main
 
         private readonly ObservableChanged<bool> Start = new ObservableChanged<bool>(false);
         private readonly ObservableChanged<bool> CanSave = new ObservableChanged<bool>(false);
+        private readonly Dictionary<string, string> HistoryNameMap =
+            new Dictionary<string, string>();
 
         private DateTime Time = DateTime.Now;
 
@@ -91,6 +97,16 @@ namespace PowerSet.Main
             InitChart();
             EventBind();
             StartProcess();
+
+            var tables = GF_SqlHelper.DbHelper.DbInstance.DbMaintenance.GetTableInfoList();
+            tables.ForEach(t =>
+            {
+                if (!t.Name.Contains('_'))
+                    return;
+                var key = t.Name.Split('_')[0] + "_" + t.Name.Split('_')[1];
+                HistoryNameMap[key] = t.Name;
+            });
+            TubeSelect.Items.AddRange(HistoryNameMap.Keys.ToArray());
 
             Prefix.ForEach(p =>
             {
@@ -143,6 +159,7 @@ namespace PowerSet.Main
         {
             CanSave.Val = false;
             Start.Val = !Start.Val;
+
             if (Start.Val)
             {
                 ChartData.Clear();
@@ -194,8 +211,6 @@ namespace PowerSet.Main
             {
                 Stopwatch.Stop();
             }
-
-           
         }
 
         private void AllCycle_Finish()
@@ -225,23 +240,24 @@ namespace PowerSet.Main
         {
             if (sender is ObservableChanged<bool> s)
             {
-				Prefix.ForEach(p =>
-				{
-					DisableControllNameSuffix.ForEach(suffix =>
-					{
-						UpdateControlProperty(
-							Uis[p + suffix],
-							new Action(() => Uis[p + suffix].Enabled = !Start.Val)
-						);
-					});
-				});
+                Prefix.ForEach(p =>
+                {
+                    DisableControllNameSuffix.ForEach(suffix =>
+                    {
+                        UpdateControlProperty(
+                            Uis[p + suffix],
+                            new Action(() => Uis[p + suffix].Enabled = !Start.Val)
+                        );
+                    });
+                });
 
-				UpdateControlProperty(End_Btn, new Action(() => End_Btn.Enabled = s.Val));
+                UpdateControlProperty(End_Btn, new Action(() => End_Btn.Enabled = s.Val));
                 UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = !s.Val));
-                UpdateControlProperty(Save_Btn, new Action(() => Save_Btn.Enabled = !s.Val | CanSave.Val));
-
-				
-			}
+                UpdateControlProperty(
+                    Save_Btn,
+                    new Action(() => Save_Btn.Enabled = !s.Val | CanSave.Val)
+                );
+            }
         }
 
         /// <summary>
@@ -500,46 +516,73 @@ namespace PowerSet.Main
             );
         }
 
+        private readonly Dictionary<string, List<ParamProcessSet>> ParamProcess =
+            new Dictionary<string, List<ParamProcessSet>>();
+
         /// <summary>
         /// 初始化数据表
         /// </summary>
         private void InitCycleTableData()
         {
-            Prefix.ForEach(f => ParamSets.Add(f, new ParamSet()));
-
-            var baseDataTable = new DataTable();
-            var t = typeof(ParamProcessSet);
-            var ps = t.GetProperties();
-
-            #region Default Table Data Create
-            for (int i = 0; i < 12; i++)
+            // TODO: 读取数据库设置，对设置参数进行存储
+            if (
+                !DbHelper
+                    .DbInstance.DbMaintenance.GetTableInfoList()
+                    .Any(it => it.Name.Contains("ParamSet"))
+            )
             {
-                baseDataTable.Rows.Add();
-            }
-
-            foreach (var property in ps)
-            {
-                var colset =
-                    property.GetCustomAttributes(typeof(ColSetAttribute), false)
-                    as ColSetAttribute[];
-                if (colset.Length > 0 && !HiddenTableCol.Contains(colset[0].Name))
+                Prefix.ForEach(p =>
                 {
-                    baseDataTable.Columns.Add(colset[0].Name);
-
-                    foreach (DataRow row in baseDataTable.Rows)
+                    Core.InitTable<ParamProcessSet>($"{p}ParamSet");
+                    var data = new List<ParamProcessSet>();
+                    for (int i = 0; i < 12; i++)
                     {
-                        row[colset[0].Name] = colset[0].DefaultVal;
+                        data.Add(new ParamProcessSet(i, 1000 + i * 500, 10, 0, 1));
                     }
-                }
+                    Core.AddData($"{p}ParamSet", data);
+                });
             }
 
-            #endregion
+            Prefix.ForEach(async p =>
+            {
+                ParamSets.Add(p, new ParamSet());
+                ParamProcess.Add(p, await Core.GetData<ParamProcessSet>($"{p}ParamSet"));
+            });
 
+            var dataTableTemplate = new DataTable();
+            dataTableTemplate.Columns.Add("周期");
+            dataTableTemplate.Columns.Add("设置电流");
+            dataTableTemplate.Columns.Add("执行时间");
+            dataTableTemplate.Columns.Add("关闭时间");
+            dataTableTemplate.Columns.Add("设置次数");
+            dataTableTemplate.Columns.Add("执行次数");
 
-            #region Table Set Property & Add Data
             Prefix.ForEach(p =>
             {
-                DataTables.Add(p, baseDataTable.Copy());
+                var process = ParamProcess[p];
+                process.Sort(
+                    new Comparison<ParamProcessSet>(
+                        (a, b) =>
+                        {
+                            return a.ProcessIndex - b.ProcessIndex;
+                        }
+                    )
+                );
+                var dataTable = dataTableTemplate.Copy();
+
+                for (int i = 0; i < process.Count; i++)
+                {
+                    var data = process[i];
+                    dataTable.Rows.Add(
+                        $"周期 {data.ProcessIndex + 1:000}",
+                        data.I,
+                        data.ProcessTime,
+                        data.CloseTime,
+                        data.ProcessCnt
+                    );
+                }
+
+                DataTables.Add(p, dataTable);
 
                 if (
                     Uis.TryGetValue(p + C.UI_PARAM_SET_TABLE, out var control)
@@ -557,16 +600,12 @@ namespace PowerSet.Main
                         col.SortMode = DataGridViewColumnSortMode.NotSortable;
 
                         if (ReadOnlyTableCol.Contains(col.Name, true))
+                        {
                             col.ReadOnly = true;
-                    }
-
-                    for (int i = 0; i < table.RowCount; i++)
-                    {
-                        table.Rows[i].Cells["周期"].Value = $"周期{i + 1: 000}";
+                        }
                     }
                 }
             });
-            #endregion
         }
 
         private void Cycle_Execute(CycleExecuteArg arg)
@@ -596,28 +635,9 @@ namespace PowerSet.Main
             DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
         }
 
-        // TODO: 清除灰色
         // TODO: 设置可更改默认参数
-        // TODO: 暂停后才可结束
-        private void Cycle_Executed(CycleExecuteArg arg)
-        {
-            //if (
-            //    Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
-            //    && c is DataGridView table
-            //)
-            //{
-            //    UpdateControlProperty(
-            //        table,
-            //        new Action(() =>
-            //        {
-            //            table.Rows[arg.Index].DefaultCellStyle.BackColor = System
-            //                .Drawing
-            //                .Color
-            //                .Gray;
-            //        })
-            //    );
-            //}
-        }
+        // TODO: 暂停后才可结束 next version
+        private void Cycle_Executed(CycleExecuteArg arg) { }
 
         /// <summary>
         /// 初始化UI表
@@ -780,6 +800,53 @@ namespace PowerSet.Main
                         table.Columns[i].ReadOnly = Lock;
                     }
                 });
+
+                UpdateControlProperty(
+                    sender as Button,
+                    new Action(() =>
+                    {
+                        (sender as Button).Text = Lock ? "设置" : "保存";
+                    })
+                );
+
+                if (Lock)
+                {
+                    // TODO: 保存参数设置
+
+                    Prefix.ForEach(async p =>
+                    {
+                        var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
+                        var data = await Core.GetData<ParamProcessSet>($"{p}ParamSet");
+                        for (int i = 0; (i < table.RowCount); i++)
+                        {
+                            var row = table.Rows[i];
+                            Debug.WriteLine(
+                                Convert.ToInt32(
+                                    table.Rows[i].Cells[0].Value.ToString().Split(' ')[1]
+                                )
+                            );
+                            var d = data.FirstOrDefault(it =>
+                                it.ProcessIndex
+                                == Convert.ToInt32(
+                                    table.Rows[i].Cells[0].Value.ToString().Split(' ')[1]
+                                ) - 1
+                            );
+                            if (data == null)
+                            {
+                                d = new ParamProcessSet { ProcessIndex = i };
+                            }
+                            d.I = Convert.ToInt32(row.Cells[1].Value);
+                            d.ProcessTime = Convert.ToInt32(row.Cells[2].Value);
+                            d.CloseTime = Convert.ToInt32(row.Cells[3].Value);
+                            d.ProcessCnt = Convert.ToInt32(row.Cells[4].Value);
+                        }
+                        data.ForEach(it =>
+                        {
+                            Core.UpdateData($"{p}ParamSet", it.Id, it);
+                        });
+                        DbHelper.DbInstance.Updateable(data).AS($"{p}ParamSet").ExecuteCommand();
+                    });
+                }
             }
         }
 
@@ -793,6 +860,46 @@ namespace PowerSet.Main
             {
                 UpdateControlProperty(PwdBtn, new Action(() => PwdBtn.Enabled = false));
             }
+        }
+
+        private void Save_Btn_Click(object sender, EventArgs e)
+        {
+            Prefix.ForEach(p =>
+            {
+                if (!Data.TryGetValue(p, out var d))
+                    return;
+                var tableName =
+                    $"{p}_{(Uis[p + C.UI_TUBE_VAL_TEXT] as TextBox).Text}_{DateTime.UtcNow.ToFileTimeUtc()}";
+
+                GF_SqlHelper.Core.InitTable<RealIData>(tableName);
+                GF_SqlHelper.Core.AddData(tableName, d);
+            });
+        }
+
+        private async void History_Btn_Click(object sender, EventArgs e)
+        {
+            var tube = HistoryNameMap[TubeSelect.Text];
+            if (Data.Any(it => it.Key == "History"))
+            {
+                Data.Remove("History");
+            }
+            Data.Add("History", await GF_SqlHelper.Core.GetData<RealIData>(tube));
+            if (!Chart.Series.Any(it => it.Name == "History"))
+            {
+                Chart.Series.Add(
+                    new Series("History")
+                    {
+                        ChartType = SeriesChartType.StepLine,
+                        Legend = C.BASE_LEGEND,
+                        BorderWidth = 4,
+                    }
+                );
+            }
+            Data["History"]
+                .ForEach(d =>
+                {
+                    Chart.Series["History"].Points.AddXY(d.XVal, d.YVal);
+                });
         }
     }
 }

@@ -11,6 +11,8 @@ namespace PowerSet
 		[STAThread]
 		static void Main()
 		{
+			GF_SqlHelper.Core.DbInit();
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new Main.MainForm());
