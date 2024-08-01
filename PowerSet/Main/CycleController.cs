@@ -1,113 +1,82 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
-using System.Linq;
-using SqlSugar.SplitTableExtensions;
 
 namespace PowerSet.Main
 {
     internal class CycleController
     {
-        public CycleController() { }
+        private readonly char[] split = new char[] { ' ' };
+
+        /// <summary>
+        /// 执行总次数
+        /// </summary>
+        public int TotalCnt { get; set; }
+        public int Current { get; set; }
+        public string Flag { get; set; }
+        public List<Cycle> Cycles { get; set; } = new List<Cycle>();
+
+        public event Action Finish;
+
+		public void Start()
+        {
+            Cycles[Current].Start();
+        }
 
         public CycleController(DataTable table, string flag)
         {
-            ProcessFlag = flag;
+            Flag = flag;
             if (table.Columns.Count != 6 || table.Columns[0].ColumnName != "周期")
+            {
                 throw new Exception("传入的数据表不为周期表！");
+            }
 
-            EndCycle = table.Rows.Count;
-            CurrentCycle = Math.Max(1, StartCycle);
+            TotalCnt = table.Rows.Count;
 
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 var row = table.Rows[i];
+                var index =
+                    Convert.ToInt32(
+                        table
+                            .Rows[i][0]
+                            .ToString()
+                            .Split(split, StringSplitOptions.RemoveEmptyEntries)[1]
+                    ) - 1;
+
                 var c = new Cycle()
                 {
-                    Index =
-                        Convert.ToInt32(
-                            table
-                                .Rows[i][0]
-                                .ToString()
-                                .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)[1]
-                        ) - 1,
+                    Index = index,
                     Value = Convert.ToInt32(row[1]),
                     WorkTime = Convert.ToInt32(row[2]),
                     SleepTime = Convert.ToInt32(row[3]),
                     Count = Convert.ToInt32(row[4]),
-                    Controller = this,
-                    ProcessFlag = flag
+                    Flag = flag
                 };
+
+                c.Finish += C_Finish;
 
                 Cycles.Add(c);
             }
         }
 
-        public List<Cycle> Cycles { get; set; } = new List<Cycle>();
+		public void FinishAll()
+		{
+            Cycles[Current].Close();
+            TotalCnt = -1;
+		}
 
-        public int StartCycle { get; set; }
-        public int EndCycle { get; set; }
-
-        public int CurrentCycle { get; set; }
-
-        public string ProcessFlag { get; set; }
-
-        private bool _isFinish = false;
-        public bool IsFinish
+		private void C_Finish(Cycle.CycleExecuteArg arg)
         {
-            get => CurrentCycle > EndCycle | false;
-            set { _isFinish = value; }
-        }
-
-        public event Action CycleStart;
-        public event Action EnterNextCycle;
-        public event Action AllCycleFinish;
-
-        public Cycle GetCurrentCycle()
-        {
-            return Cycles[CurrentCycle - 1];
-        }
-
-        public Cycle GetNextCycle()
-        {
-            return Cycles[CurrentCycle ];
-        }
-
-        public bool TryEnterNextCycle()
-        {
-            if (GetCurrentCycle().IsFinish)
+            if (Current < TotalCnt)
             {
-                GetNextCycle().Start();
-                CurrentCycle++;
-                EnterNextCycle?.Invoke();
-                Debug.WriteLine($"CurrentCycle: {CurrentCycle}");
-                return true;
+                Current++;
+                Cycles[Current].Start();
             }
-            return false;
-        }
-
-        public void Start()
-        {
-            if (IsFinish)
-                return;
-            GetCurrentCycle().Start();
-            CycleStart?.Invoke();
-        }
-
-        public void Finish()
-        {
-            AllCycleFinish?.Invoke();
-        }
-
-        public void FinishAll()
-        {
-            foreach (var cycle in Cycles)
+            else
             {
-                cycle.IsFinish = true;
+                Finish?.Invoke();
             }
-            IsFinish = true;
-            AllCycleFinish?.Invoke();
         }
     }
 }

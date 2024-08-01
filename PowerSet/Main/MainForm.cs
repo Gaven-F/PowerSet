@@ -1,18 +1,17 @@
-﻿using System;
+﻿using GF_SqlHelper;
+using PowerSet.Utils;
+using SqlSugar;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using GF_SqlHelper;
-using PowerSet.Attributes;
-using PowerSet.Utils;
-using SqlSugar;
+using static PowerSet.Main.Cycle;
 using C = PowerSet.Main.ConstData;
 
 namespace PowerSet.Main
@@ -30,7 +29,6 @@ namespace PowerSet.Main
             C.UI_END_PROCESS_NUM
         };
         private readonly List<string> ReadOnlyTableCol = new List<string> { "周期", "执行次数", "实际电流" };
-        private readonly List<string> HiddenTableCol = new List<string> { "实际电流" };
 
         private readonly List<string> Prefix = new List<string> { C.K, C.N, C.C, C.S };
 
@@ -61,8 +59,6 @@ namespace PowerSet.Main
 
         private readonly DataTable ChartData = new DataTable();
 
-        private readonly Dictionary<string, TextBox> Tubes = new Dictionary<string, TextBox>();
-
         private System.Threading.Timer MainTimer;
 
         private readonly PowerController PowerController = new PowerController();
@@ -85,8 +81,7 @@ namespace PowerSet.Main
             new Dictionary<string, string>();
 
         private DateTime Time = DateTime.Now;
-
-        readonly Stopwatch Stopwatch = new Stopwatch();
+        private readonly Stopwatch Stopwatch = new Stopwatch();
         #endregion
 
         public MainForm()
@@ -160,6 +155,10 @@ namespace PowerSet.Main
         {
             CanSave.Val = false;
             Start.Val = !Start.Val;
+            foreach (var item in CycleControllers)
+            {
+                item.Value.FinishAll();
+            }
             if (Chart.Series.FirstOrDefault(it => it.Name == "History") is Series s)
             {
                 Chart.Series.Remove(s);
@@ -173,7 +172,7 @@ namespace PowerSet.Main
                 {
                     foreach (var item in CycleControllers)
                     {
-                        item.Value.FinishAll();
+                        //item.Value.FinishAll();
                     }
                 }
                 CycleControllers.Clear();
@@ -186,39 +185,46 @@ namespace PowerSet.Main
                     if (!ProcessStart[p])
                         return;
 
+
                     var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
 
-                    UpdateControlProperty(table, new Action(() =>
-                    {
-                        foreach (DataGridViewRow row in table.Rows)
+                    UpdateControlProperty(
+                        table,
+                        new Action(() =>
                         {
-                            row.Cells[5].Value = "";
-                        }
-                    }));
+                            foreach (DataGridViewRow row in table.Rows)
+                            {
+                                row.Cells[5].Value = "";
+                            }
+                        })
+                    );
+
+                    var start =
+                        Convert.ToInt32((Uis[p + C.UI_START_PROCESS_NUM] as NumericUpDown).Value);
+                    var end = Convert.ToInt32(
+                        (Uis[p + C.UI_END_PROCESS_NUM] as NumericUpDown).Value
+                    );
+
+                    var exeCnt = end - start;
 
                     CycleControllers.Add(
                         p,
-                        new CycleController(DataTables[p], p)
-                        {
-                            CurrentCycle = Convert.ToInt32(
-                                (Uis[p + C.UI_START_PROCESS_NUM] as NumericUpDown).Value
-                            ),
-                            EndCycle = Convert.ToInt32(
-                                (Uis[p + C.UI_END_PROCESS_NUM] as NumericUpDown).Value
-                            )
-                        }
+                        new CycleController(DataTables[p], p) { Current = start - 1, TotalCnt = exeCnt }
                     );
 
-                    CycleControllers[p].AllCycleFinish -= AllCycle_Finish;
-                    CycleControllers[p].AllCycleFinish += AllCycle_Finish;
+                    CycleControllers[p].Finish -= AllCycle_Finish;
+                    CycleControllers[p].Finish += AllCycle_Finish;
 
                     var cycles = CycleControllers[p].Cycles;
                     cycles.ForEach(c =>
                     {
-                        c.Execute += Cycle_Execute;
-                        c.Executed += Cycle_Executed;
+                        c.WorkExecute += Cycle_WorkExecute;
+                        c.SleepExecute += Cycle_SleepExecuted;
                     });
-
+                    foreach (var item in CycleControllers[p].Cycles)
+                    {
+                        item.Finish += Cycle_Finish;
+                    }
                     CycleControllers[p].Start();
                 });
             }
@@ -228,10 +234,33 @@ namespace PowerSet.Main
             }
         }
 
+        private void Cycle_Finish(CycleExecuteArg arg)
+        {
+
+            var rows = (Uis[arg.Flag + C.UI_PARAM_SET_TABLE] as DataGridView).Rows;
+            foreach (DataGridViewRow row in rows)
+            {
+                UpdateControlProperty(
+                    Uis[arg.Flag + C.UI_PARAM_SET_TABLE],
+                    new Action(() =>
+                    {
+                        row.DefaultCellStyle.BackColor = SystemColors.Window;
+                    })
+                );
+            }
+        }
+
         private void AllCycle_Finish()
         {
+            CanSave.Val = true;
+            Start.Val = false;
+
             Prefix.ForEach(p =>
             {
+                foreach (var item in CycleControllers)
+                {
+                    item.Value.FinishAll();
+                }
                 var rows = (Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView).Rows;
                 foreach (DataGridViewRow row in rows)
                 {
@@ -374,12 +403,6 @@ namespace PowerSet.Main
 
             AddDataToChart();
 
-            if (CycleControllers.Any(it => it.Value.IsFinish))
-            {
-                CanSave.Val = true;
-                Start.Val = false;
-            }
-
             RSecond++;
         }
 
@@ -418,8 +441,8 @@ namespace PowerSet.Main
                         lab,
                         new Action(() =>
                         {
-                            CanSave.Val = true;
-                            lab.BackColor = System.Drawing.Color.Red;
+                            //CanSave.Val = true;
+                            //lab.BackColor = System.Drawing.Color.Red;
                             //Start.Val = false;
                         })
                     );
@@ -466,7 +489,7 @@ namespace PowerSet.Main
 
             chartArea.AxisY.Interval = Convert.ToDouble(YAxisMargin_Val.Value);
 
-            chartArea.AxisX.Minimum = 1;
+            chartArea.AxisX.Minimum = 2;
 
             chartArea.AxisX.Maximum = 60;
             chartArea.AxisY.Maximum = 5;
@@ -542,7 +565,6 @@ namespace PowerSet.Main
         /// </summary>
         private void InitCycleTableData()
         {
-            // TODO: 读取数据库设置，对设置参数进行存储
             if (
                 !DbHelper
                     .DbInstance.DbMaintenance.GetTableInfoList()
@@ -626,10 +648,9 @@ namespace PowerSet.Main
             });
         }
 
-        private void Cycle_Execute(CycleExecuteArg arg)
+        private void Cycle_WorkExecute(CycleExecuteArg arg)
         {
             PowerController.SetI(arg.Flag, arg.Value);
-            // TODO: 表格颜色闪烁
 
             if (
                 Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
@@ -641,24 +662,24 @@ namespace PowerSet.Main
                     table,
                     new Action(() =>
                     {
-                        table.Rows[arg.Index].DefaultCellStyle.BackColor = arg.IsFinish
-                            ? System.Drawing.Color.LightGray
-                            : arg.TotalTime % 2 == 0
-                                ? Color.LightBlue
-                                : System.Drawing.Color.LightGreen;
+                        table.Rows[arg.Index].DefaultCellStyle.BackColor = Color.LightGreen;
                     })
                 );
             }
 
-            UpdateControlProperty(Uis[arg.Flag + C.UI_PARAM_SET_TABLE], new Action(() =>
-            {
-                DataTables[arg.Flag].Rows[arg.Index][5] = arg.CurrentCount;
-            }));
+            UpdateControlProperty(
+                Uis[arg.Flag + C.UI_PARAM_SET_TABLE],
+                new Action(() =>
+                {
+                    DataTables[arg.Flag].Rows[arg.Index][5] = arg.TotalCount;
+                })
+            );
         }
 
-        // TODO: 设置可更改默认参数
-        // TODO: 暂停后才可结束 next version
-        private void Cycle_Executed(CycleExecuteArg arg) { }
+        private void Cycle_SleepExecuted(CycleExecuteArg arg)
+        {
+            PowerController.SetI(arg.Flag, 0);
+        }
 
         /// <summary>
         /// 初始化UI表
@@ -768,7 +789,7 @@ namespace PowerSet.Main
         }
 
         #region ControlUtils
-        void UpdateControlProperty(Control control, Action updateAction)
+        private void UpdateControlProperty(Control control, Action updateAction)
         {
             if (control.InvokeRequired)
             {
@@ -936,7 +957,13 @@ namespace PowerSet.Main
         private void Tube_Changed(object sender, EventArgs e)
         {
             var c = sender as MaskedTextBox;
-            if (DbHelper.DbInstance.DbMaintenance.GetTableInfoList().Where(it => it.Name.Contains("_")).Select(it => it.Name.Split('_')[1]).Contains(c.Text))
+            if (
+                DbHelper
+                    .DbInstance.DbMaintenance.GetTableInfoList()
+                    .Where(it => it.Name.Contains("_"))
+                    .Select(it => it.Name.Split('_')[1])
+                    .Contains(c.Text)
+            )
             {
                 MessageBox.Show("管号重复！");
             }
