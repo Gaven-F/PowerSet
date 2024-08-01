@@ -95,6 +95,7 @@ namespace PowerSet.Main
                 cycle.IsFinish = true;
             }
             IsFinish = true;
+            AllCycleFinish?.Invoke();
         }
     }
 }

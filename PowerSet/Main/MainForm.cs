@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -116,10 +117,10 @@ namespace PowerSet.Main
         /// </summary>
         private void EventBind()
         {
-            XAxisMargin_Val.ValueChanged += ValChanged;
-            YAxisMargin_Val.ValueChanged += ValChanged;
+            XAxisMargin_Val.ValueChanged += Val_Changed;
+            YAxisMargin_Val.ValueChanged += Val_Changed;
 
-            Start.PropertyChanged += StartChanged;
+            Start.PropertyChanged += Start_Changed;
 
             Start_Btn.Click += StartBtn_Click;
             End_Btn.Click += StartBtn_Click;
@@ -174,6 +175,9 @@ namespace PowerSet.Main
                         }
                     );
 
+                    CycleControllers[p].AllCycleFinish -= AllCycle_Finish;
+                    CycleControllers[p].AllCycleFinish += AllCycle_Finish;
+
                     var cycles = CycleControllers[p].Cycles;
                     cycles.ForEach(c =>
                     {
@@ -201,12 +205,30 @@ namespace PowerSet.Main
             });
         }
 
+        private void AllCycle_Finish()
+        {
+            Prefix.ForEach(p =>
+            {
+                var rows = (Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView).Rows;
+                foreach (DataGridViewRow row in rows)
+                {
+                    UpdateControlProperty(
+                        Uis[p + C.UI_PARAM_SET_TABLE],
+                        new Action(() =>
+                        {
+                            row.DefaultCellStyle.BackColor = SystemColors.Window;
+                        })
+                    );
+                }
+            });
+        }
+
         /// <summary>
         /// 开始状态改变事件
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void StartChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Start_Changed(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (sender is ObservableChanged<bool> s)
             {
@@ -348,7 +370,7 @@ namespace PowerSet.Main
                 else
                     val = 0;
 
-                if (val <= 10)
+                if (val <= 10 && ProcessStart[p])
                 {
                     var lab = Uis[p + C.UI_I_VAL_LAB];
                     UpdateControlProperty(
@@ -362,13 +384,6 @@ namespace PowerSet.Main
                 }
                 RealVals[p] = val;
             });
-            //Prefix.ForEach(p => RealVals[p] = PowerController.GetI(p) / 1000.0);
-            //PowerController.OpenI(C.K);
-            //PowerController.OpenI(C.N);
-            //PowerController.OpenI(C.C);
-            //PowerController.OpenI(C.S);
-            //PowerController.SetI("K", 0);
-            //PowerController.SetI("N", 0);
         }
 
         /// <summary>
@@ -413,8 +428,9 @@ namespace PowerSet.Main
 
             chartArea.AxisX.Maximum = 60;
             chartArea.AxisY.Maximum = 5;
+            chartArea.AxisY.Minimum = 0;
 
-            chartArea.AxisY.LabelStyle.Format = "0.0A";
+			chartArea.AxisY.LabelStyle.Format = "0.0A";
 
             #endregion
 
@@ -424,7 +440,11 @@ namespace PowerSet.Main
             {
                 ChartData.Columns.Add($"{p}Y");
             });
-            ChartData.RowChanged += DataChanged;
+            ChartData.RowChanged += Data_Changed;
+            for (int i = 0; i < 62; i++)
+            {
+                ChartData.Rows.Add($"{i - 1}秒", -1, -1, -1, -1);
+            }
             //ChartData.Rows.Add("0秒", 0.0, 0.0, 0.0, 0.0);
             //ChartData.Rows.Add("1秒", 0.0, 0.0, 0.0, 0.0);
             //ChartData.Rows.Add("2秒", 0.0, 0.0, 0.0, 0.0);
@@ -442,7 +462,7 @@ namespace PowerSet.Main
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void DataChanged(object sender, DataRowChangeEventArgs e)
+        private void Data_Changed(object sender, DataRowChangeEventArgs e)
         {
             var x = Math.Max(
                 Chart.ChartAreas[C.CHART_BASE_CHARTAREA].AxisX.Maximum,
@@ -557,7 +577,7 @@ namespace PowerSet.Main
                         table.Rows[arg.Index].DefaultCellStyle.BackColor = arg.IsFinish
                             ? System.Drawing.Color.LightGray
                             : arg.TotalTime % 2 == 0
-                                ? System.Drawing.Color.LightBlue
+                                ? Color.LightBlue
                                 : System.Drawing.Color.LightGreen;
                     })
                 );
@@ -571,22 +591,22 @@ namespace PowerSet.Main
         // TODO: 暂停后才可结束
         private void Cycle_Executed(CycleExecuteArg arg)
         {
-            if (
-                Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
-                && c is DataGridView table
-            )
-            {
-                UpdateControlProperty(
-                    table,
-                    new Action(() =>
-                    {
-                        table.Rows[arg.Index].DefaultCellStyle.BackColor = System
-                            .Drawing
-                            .Color
-                            .Gray;
-                    })
-                );
-            }
+            //if (
+            //    Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
+            //    && c is DataGridView table
+            //)
+            //{
+            //    UpdateControlProperty(
+            //        table,
+            //        new Action(() =>
+            //        {
+            //            table.Rows[arg.Index].DefaultCellStyle.BackColor = System
+            //                .Drawing
+            //                .Color
+            //                .Gray;
+            //        })
+            //    );
+            //}
         }
 
         /// <summary>
@@ -675,7 +695,7 @@ namespace PowerSet.Main
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ValChanged(object sender, EventArgs e)
+        private void Val_Changed(object sender, EventArgs e)
         {
             if (sender is NumericUpDown s && s.Name.Contains("AxisMargin_Val"))
             {
