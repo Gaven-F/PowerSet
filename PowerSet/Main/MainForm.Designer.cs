@@ -63,7 +63,7 @@ namespace PowerSet.Main
 			this.SStartProcess_Num = new System.Windows.Forms.NumericUpDown();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
 			this.label6 = new System.Windows.Forms.Label();
-			this.Saven_Btn = new System.Windows.Forms.Button();
+			this.Save_Btn = new System.Windows.Forms.Button();
 			this.PwdBtn = new System.Windows.Forms.Button();
 			this.label3 = new System.Windows.Forms.Label();
 			this.CloseBtn = new System.Windows.Forms.Button();
@@ -574,7 +574,7 @@ namespace PowerSet.Main
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 10F));
 			this.tableLayoutPanel2.Controls.Add(this.label6, 2, 1);
-			this.tableLayoutPanel2.Controls.Add(this.Saven_Btn, 8, 1);
+			this.tableLayoutPanel2.Controls.Add(this.Save_Btn, 8, 1);
 			this.tableLayoutPanel2.Controls.Add(this.PwdBtn, 4, 1);
 			this.tableLayoutPanel2.Controls.Add(this.label3, 2, 0);
 			this.tableLayoutPanel2.Controls.Add(this.CloseBtn, 7, 0);
@@ -612,15 +612,15 @@ namespace PowerSet.Main
 			// 
 			// Saven_Btn
 			// 
-			this.Saven_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.Saven_Btn.Enabled = false;
-			this.Saven_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-			this.Saven_Btn.Location = new System.Drawing.Point(1164, 50);
-			this.Saven_Btn.Name = "Saven_Btn";
-			this.Saven_Btn.Size = new System.Drawing.Size(138, 40);
-			this.Saven_Btn.TabIndex = 18;
-			this.Saven_Btn.Text = "保存";
-			this.Saven_Btn.UseVisualStyleBackColor = true;
+			this.Save_Btn.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.Save_Btn.Enabled = false;
+			this.Save_Btn.Font = new System.Drawing.Font("微软雅黑", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+			this.Save_Btn.Location = new System.Drawing.Point(1164, 50);
+			this.Save_Btn.Name = "Saven_Btn";
+			this.Save_Btn.Size = new System.Drawing.Size(138, 40);
+			this.Save_Btn.TabIndex = 18;
+			this.Save_Btn.Text = "保存";
+			this.Save_Btn.UseVisualStyleBackColor = true;
 			// 
 			// PwdBtn
 			// 
@@ -1303,7 +1303,7 @@ namespace PowerSet.Main
 		private System.Windows.Forms.NumericUpDown NStartProcess_Num;
 		private System.Windows.Forms.DataGridView KParamSetTable;
 		private System.Windows.Forms.Label label6;
-		private System.Windows.Forms.Button Saven_Btn;
+		private System.Windows.Forms.Button Save_Btn;
 		private System.Windows.Forms.Button PwdBtn;
 		private System.Windows.Forms.TextBox Pwd;
 	}

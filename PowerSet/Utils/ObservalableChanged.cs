@@ -18,7 +18,7 @@ namespace PowerSet.Utils
                     return;
 
                 val = value;
-                PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Val)));
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Val)));
             }
         }
     }

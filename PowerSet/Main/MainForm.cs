@@ -76,6 +76,7 @@ namespace PowerSet.Main
         private long VSecond = 0;
 
         private readonly ObservableChanged<bool> Start = new ObservableChanged<bool>(false);
+        private readonly ObservableChanged<bool> CanSave = new ObservableChanged<bool>(false);
 
         private DateTime Time = DateTime.Now;
 
@@ -140,6 +141,7 @@ namespace PowerSet.Main
 
         private void StartBtn_Click(object sender, EventArgs e)
         {
+            CanSave.Val = false;
             Start.Val = !Start.Val;
             if (Start.Val)
             {
@@ -193,16 +195,7 @@ namespace PowerSet.Main
                 Stopwatch.Stop();
             }
 
-            Prefix.ForEach(p =>
-            {
-                DisableControllNameSuffix.ForEach(suffix =>
-                {
-                    UpdateControlProperty(
-                        Uis[p + suffix],
-                        new Action(() => Uis[p + suffix].Enabled = !Start.Val)
-                    );
-                });
-            });
+           
         }
 
         private void AllCycle_Finish()
@@ -232,10 +225,23 @@ namespace PowerSet.Main
         {
             if (sender is ObservableChanged<bool> s)
             {
-                UpdateControlProperty(End_Btn, new Action(() => End_Btn.Enabled = s.Val));
+				Prefix.ForEach(p =>
+				{
+					DisableControllNameSuffix.ForEach(suffix =>
+					{
+						UpdateControlProperty(
+							Uis[p + suffix],
+							new Action(() => Uis[p + suffix].Enabled = !Start.Val)
+						);
+					});
+				});
+
+				UpdateControlProperty(End_Btn, new Action(() => End_Btn.Enabled = s.Val));
                 UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = !s.Val));
-                UpdateControlProperty(Start_Btn, new Action(() => Start_Btn.Enabled = !s.Val));
-            }
+                UpdateControlProperty(Save_Btn, new Action(() => Save_Btn.Enabled = !s.Val | CanSave.Val));
+
+				
+			}
         }
 
         /// <summary>
@@ -338,7 +344,10 @@ namespace PowerSet.Main
             AddDataToChart();
 
             if (CycleControllers.Any(it => it.Value.IsFinish))
+            {
+                CanSave.Val = true;
                 Start.Val = false;
+            }
 
             RSecond++;
         }
@@ -377,6 +386,7 @@ namespace PowerSet.Main
                         lab,
                         new Action(() =>
                         {
+                            CanSave.Val = true;
                             lab.BackColor = System.Drawing.Color.Red;
                             Start.Val = false;
                         })
@@ -430,7 +440,7 @@ namespace PowerSet.Main
             chartArea.AxisY.Maximum = 5;
             chartArea.AxisY.Minimum = 0;
 
-			chartArea.AxisY.LabelStyle.Format = "0.0A";
+            chartArea.AxisY.LabelStyle.Format = "0.0A";
 
             #endregion
 
