@@ -2726,15 +2726,19 @@ namespace PowerSet.Main
             {
                 case "K":
                     CurSetVal_K = (int)value;
-                    return CurSetVal_K;
+					CurReadVal_K = (int)value;
+					return CurSetVal_K;
                 case "N":
                     CurSetVal_Na = (int)value;
+                    CurReadVal_Na = (int)value;
                     return CurSetVal_Na;
                 case "C":
                     CurSetVal_Cs = (int)value;
+                    CurReadVal_Cs = (int)value;
                     return CurSetVal_Cs;
                 case "S":
                     CurSetVal_Sb = (int)value;
+                    CurReadVal_Sb = (int)value;
                     return CurSetVal_Sb;
                 default:
                     return 1;

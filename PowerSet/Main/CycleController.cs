@@ -18,7 +18,9 @@ namespace PowerSet.Main
 
         public event Action Finish;
 
-		public void Start()
+        public bool FinishFlag { get; set; }
+
+        public void Start()
         {
             Cycles[Current].Start();
         }
@@ -60,13 +62,20 @@ namespace PowerSet.Main
             }
         }
 
-		public void FinishAll()
-		{
+        /// <summary>
+        /// 强制结束所有小周期
+        /// </summary>
+        public void FinishAll()
+        {
             Cycles[Current].Close();
             TotalCnt = -1;
-		}
+        }
 
-		private void C_Finish(Cycle.CycleExecuteArg arg)
+        /// <summary>
+        /// 小周期结束事件
+        /// </summary>
+        /// <param name="arg"></param>
+        private void C_Finish(Cycle.CycleExecuteArg arg)
         {
             if (Current < TotalCnt)
             {
@@ -75,6 +84,7 @@ namespace PowerSet.Main
             }
             else
             {
+                FinishFlag = true;
                 Finish?.Invoke();
             }
         }

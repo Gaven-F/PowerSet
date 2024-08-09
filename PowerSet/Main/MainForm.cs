@@ -1,7 +1,4 @@
-﻿using GF_SqlHelper;
-using PowerSet.Utils;
-using SqlSugar;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
@@ -11,6 +8,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
+using GF_SqlHelper;
+using PowerSet.Utils;
+using SqlSugar;
 using static PowerSet.Main.Cycle;
 using C = PowerSet.Main.ConstData;
 
@@ -19,7 +19,20 @@ namespace PowerSet.Main
     public partial class MainForm : Form
     {
         #region Fileds
+        /// <summary>
+        /// 是否允许调整参数设置
+        /// </summary>
         private bool Lock = true;
+
+        /// <summary>
+        /// 参数设置初始数据
+        /// </summary>
+        private readonly Dictionary<string, List<ParamProcessSet>> ParamProcess =
+            new Dictionary<string, List<ParamProcessSet>>();
+
+        /// <summary>
+        /// 运行时禁止调整控件
+        /// </summary>
         private readonly List<string> DisableControllNameSuffix = new List<string>
         {
             C.UI_I_LAB,
@@ -185,7 +198,6 @@ namespace PowerSet.Main
                     if (!ProcessStart[p])
                         return;
 
-
                     var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
 
                     UpdateControlProperty(
@@ -199,8 +211,9 @@ namespace PowerSet.Main
                         })
                     );
 
-                    var start =
-                        Convert.ToInt32((Uis[p + C.UI_START_PROCESS_NUM] as NumericUpDown).Value);
+                    var start = Convert.ToInt32(
+                        (Uis[p + C.UI_START_PROCESS_NUM] as NumericUpDown).Value
+                    );
                     var end = Convert.ToInt32(
                         (Uis[p + C.UI_END_PROCESS_NUM] as NumericUpDown).Value
                     );
@@ -209,7 +222,11 @@ namespace PowerSet.Main
 
                     CycleControllers.Add(
                         p,
-                        new CycleController(DataTables[p], p) { Current = start - 1, TotalCnt = exeCnt }
+                        new CycleController(DataTables[p], p)
+                        {
+                            Current = start - 1,
+                            TotalCnt = exeCnt
+                        }
                     );
 
                     CycleControllers[p].Finish -= AllCycle_Finish;
@@ -236,7 +253,6 @@ namespace PowerSet.Main
 
         private void Cycle_Finish(CycleExecuteArg arg)
         {
-
             var rows = (Uis[arg.Flag + C.UI_PARAM_SET_TABLE] as DataGridView).Rows;
             foreach (DataGridViewRow row in rows)
             {
@@ -248,6 +264,7 @@ namespace PowerSet.Main
                     })
                 );
             }
+            PowerController.SetI(arg.Flag, 0);
         }
 
         private void AllCycle_Finish()
@@ -257,10 +274,14 @@ namespace PowerSet.Main
 
             Prefix.ForEach(p =>
             {
-                foreach (var item in CycleControllers)
+                if (CycleControllers.All(it => it.Value.FinishFlag))
                 {
-                    item.Value.FinishAll();
+                    foreach (var item in CycleControllers)
+                    {
+                        item.Value.FinishAll();
+                    }
                 }
+
                 var rows = (Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView).Rows;
                 foreach (DataGridViewRow row in rows)
                 {
@@ -439,8 +460,7 @@ namespace PowerSet.Main
                     var lab = Uis[p + C.UI_I_VAL_LAB];
                     UpdateControlProperty(
                         lab,
-                        new Action(() =>
-                        {
+                        new Action(() => {
                             //CanSave.Val = true;
                             //lab.BackColor = System.Drawing.Color.Red;
                             //Start.Val = false;
@@ -557,9 +577,6 @@ namespace PowerSet.Main
             );
         }
 
-        private readonly Dictionary<string, List<ParamProcessSet>> ParamProcess =
-            new Dictionary<string, List<ParamProcessSet>>();
-
         /// <summary>
         /// 初始化数据表
         /// </summary>
@@ -574,11 +591,21 @@ namespace PowerSet.Main
                 Prefix.ForEach(p =>
                 {
                     Core.InitTable<ParamProcessSet>($"{p}ParamSet");
-                    var data = new List<ParamProcessSet>();
-                    for (int i = 0; i < 12; i++)
+                    var data = new List<ParamProcessSet>
                     {
-                        data.Add(new ParamProcessSet(i, 1000 + i * 500, 10, 0, 1));
-                    }
+                        new ParamProcessSet(0, 1000, 10, 0, 1),
+                        new ParamProcessSet(1, 1500, 10, 0, 1),
+                        new ParamProcessSet(2, 2000, 30, 30, 3),
+                        new ParamProcessSet(3, 2500, 30, 30, 3),
+                        new ParamProcessSet(4, 3000, 30, 30, 3),
+                        new ParamProcessSet(5, 3500, 30, 30, 3),
+                        new ParamProcessSet(6, 4000, 30, 30, 3),
+                        new ParamProcessSet(7, 4500, 30, 30, 3),
+                        new ParamProcessSet(8, 5000, 30, 30, 3),
+                        new ParamProcessSet(9, 5500, 30, 30, 3),
+                        new ParamProcessSet(10, 6000, 30, 30, 3),
+                        new ParamProcessSet(11, 6500, 30, 30, 3)
+                    };
                     Core.AddData($"{p}ParamSet", data);
                 });
             }
@@ -853,8 +880,6 @@ namespace PowerSet.Main
 
                 if (Lock)
                 {
-                    // TODO: 保存参数设置
-
                     Prefix.ForEach(async p =>
                     {
                         var table = Uis[p + C.UI_PARAM_SET_TABLE] as DataGridView;
@@ -867,26 +892,24 @@ namespace PowerSet.Main
                                     table.Rows[i].Cells[0].Value.ToString().Split(' ')[1]
                                 )
                             );
-                            var d = data.FirstOrDefault(it =>
-                                it.ProcessIndex
-                                == Convert.ToInt32(
-                                    table.Rows[i].Cells[0].Value.ToString().Split(' ')[1]
-                                ) - 1
-                            );
-                            if (data == null)
-                            {
-                                d = new ParamProcessSet { ProcessIndex = i };
-                            }
+                            var d =
+                                data.FirstOrDefault(it =>
+                                    it.ProcessIndex
+                                    == Convert.ToInt32(
+                                        table.Rows[i].Cells[0].Value.ToString().Split(' ')[1]
+                                    ) - 1
+                                ) ?? new ParamProcessSet { ProcessIndex = i };
                             d.I = Convert.ToInt32(row.Cells[1].Value);
                             d.ProcessTime = Convert.ToInt32(row.Cells[2].Value);
                             d.CloseTime = Convert.ToInt32(row.Cells[3].Value);
                             d.ProcessCnt = Convert.ToInt32(row.Cells[4].Value);
+                            if (d.Id == 0)
+                            {
+                                data.Add(d);
+                            }
                         }
-                        data.ForEach(it =>
-                        {
-                            Core.UpdateData($"{p}ParamSet", it.Id, it);
-                        });
-                        DbHelper.DbInstance.Updateable(data).AS($"{p}ParamSet").ExecuteCommand();
+                        DbHelper.DbInstance.Storageable(data).As($"{p}ParamSet").ExecuteCommand();
+                        MessageBox.Show("保存成功！");
                     });
                 }
             }
@@ -913,9 +936,10 @@ namespace PowerSet.Main
                 var tableName =
                     $"{p}_{(Uis[p + C.UI_TUBE_VAL_TEXT] as MaskedTextBox).Text}_{DateTime.UtcNow.ToFileTimeUtc()}";
 
-                GF_SqlHelper.Core.InitTable<RealIData>(tableName);
-                GF_SqlHelper.Core.AddData(tableName, d);
+                Core.InitTable<RealIData>(tableName);
+                Core.AddData(tableName, d);
             });
+            MessageBox.Show("保存成功！");
         }
 
         private async void History_Btn_Click(object sender, EventArgs e)
