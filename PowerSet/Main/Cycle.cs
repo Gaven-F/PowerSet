@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace PowerSet.Main
 {
@@ -22,6 +23,8 @@ namespace PowerSet.Main
         public bool CloseFlag { get; set; } = false;
         public bool FinishFlag { get; set; } = false;
         private Timer _timer;
+        private long VSecond = 0;
+        private DateTime Time = DateTime.Now;
 
         public event Action<CycleExecuteArg> WorkExecute;
         public event Action<CycleExecuteArg> SleepExecute;
@@ -29,11 +32,17 @@ namespace PowerSet.Main
 
         public void Start()
         {
-            _timer = new Timer(Execute, null, 0, 1000);
+            Time = DateTime.Now;
+            _timer = new Timer(Execute, null, 0, 1);
         }
 
         private void Execute(object state)
         {
+            if ((DateTime.Now - Time).TotalSeconds < VSecond)
+                return;
+
+            VSecond++;
+
             if (CurrentTime / (WorkTime + SleepTime) < Count && !CloseFlag)
             {
                 if ((CurrentTime % (WorkTime + SleepTime) - WorkTime) < 0)
@@ -71,26 +80,24 @@ namespace PowerSet.Main
                 if (!FinishFlag)
                 {
                     FinishFlag = true;
-                    Finish?.Invoke(new CycleExecuteArg()
-                    {
-                        Flag = Flag,
-                        Value = Value,
-                        Index = Index,
-                        IsFinish = true,
-                        TotalCount = CurrentTime / (WorkTime + SleepTime) + 1,
-                        TotalTime = CurrentTime
-                    });
+                    Finish?.Invoke(
+                        new CycleExecuteArg()
+                        {
+                            Flag = Flag,
+                            Value = Value,
+                            Index = Index,
+                            IsFinish = true,
+                            TotalCount = CurrentTime / (WorkTime + SleepTime) + 1,
+                            TotalTime = CurrentTime
+                        }
+                    );
                 }
                 try
                 {
                     _timer.Change(Timeout.Infinite, Timeout.Infinite); // 停止计时器
                     _timer.Dispose(); // 释放计时器资源
                 }
-                catch (Exception)
-                {
-
-                }
-
+                catch (Exception) { }
             }
         }
 
@@ -107,10 +114,7 @@ namespace PowerSet.Main
                     _timer.Change(Timeout.Infinite, Timeout.Infinite); // 停止计时器
                     _timer.Dispose(); // 释放计时器资源
                 }
-                catch (Exception)
-                {
-
-                }
+                catch (Exception) { }
             }
         }
 

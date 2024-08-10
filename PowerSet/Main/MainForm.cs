@@ -78,6 +78,14 @@ namespace PowerSet.Main
 
         private readonly Dictionary<string, double> RealVals = new Dictionary<string, double>();
 
+        private readonly Dictionary<string, bool> ErrCheck = new Dictionary<string, bool>
+        {
+            { C.K, false },
+            { C.N, false },
+            { C.C, false },
+            { C.S, false },
+        };
+
         /// <summary>
         /// 项目实际运行时间
         /// </summary>
@@ -253,6 +261,7 @@ namespace PowerSet.Main
 
         private void Cycle_Finish(CycleExecuteArg arg)
         {
+            ErrCheck[arg.Flag] = false;
             var rows = (Uis[arg.Flag + C.UI_PARAM_SET_TABLE] as DataGridView).Rows;
             foreach (DataGridViewRow row in rows)
             {
@@ -264,7 +273,7 @@ namespace PowerSet.Main
                     })
                 );
             }
-            PowerController.SetI(arg.Flag, 0);
+            //PowerController.SetI(arg.Flag, 0);
         }
 
         private void AllCycle_Finish()
@@ -274,6 +283,8 @@ namespace PowerSet.Main
 
             Prefix.ForEach(p =>
             {
+                PowerController.SetI(p, 0);
+
                 if (CycleControllers.All(it => it.Value.FinishFlag))
                 {
                     foreach (var item in CycleControllers)
@@ -460,10 +471,14 @@ namespace PowerSet.Main
                     var lab = Uis[p + C.UI_I_VAL_LAB];
                     UpdateControlProperty(
                         lab,
-                        new Action(() => {
-                            //CanSave.Val = true;
-                            //lab.BackColor = System.Drawing.Color.Red;
-                            //Start.Val = false;
+                        new Action(() =>
+                        {
+                            if (ErrCheck[p])
+                            {
+                                CanSave.Val = true;
+                                lab.BackColor = System.Drawing.Color.Red;
+                                Start.Val = false;
+                            }
                         })
                     );
                 }
@@ -678,7 +693,7 @@ namespace PowerSet.Main
         private void Cycle_WorkExecute(CycleExecuteArg arg)
         {
             PowerController.SetI(arg.Flag, arg.Value);
-
+            ErrCheck[arg.Flag] = true;
             if (
                 Uis.TryGetValue(arg.Flag + C.UI_PARAM_SET_TABLE, out var c)
                 && c is DataGridView table
@@ -705,6 +720,8 @@ namespace PowerSet.Main
 
         private void Cycle_SleepExecuted(CycleExecuteArg arg)
         {
+            ErrCheck[arg.Flag] = false;
+
             PowerController.SetI(arg.Flag, 0);
         }
 
